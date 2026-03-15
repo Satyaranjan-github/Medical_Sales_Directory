@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { IMedicine } from "../types/medicine";
+import type { IMedicine } from "../../types/medicine";
 
 interface MedicineState {
     medicines: IMedicine[]

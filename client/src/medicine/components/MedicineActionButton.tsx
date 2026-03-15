@@ -1,8 +1,8 @@
 import { Eye, Pencil, Trash, Undo } from "lucide-react"
 import { useState } from "react"
+import type { IMedicine } from "../../types/medicine"
 import useMedicineOperations from "../hooks/useMedicineOperations"
-import type { IMedicine } from "../types/medicine"
-import MedicineForm from "./MedicineForm"
+import MedicineFormModal from "./MedicineFormModal"
 
 const MedicineActionButton = ({ medicineData }: { medicineData: IMedicine }) => {
     const [open, setOpen] = useState(false)
@@ -51,7 +51,7 @@ const MedicineActionButton = ({ medicineData }: { medicineData: IMedicine }) => 
             </div>
             {
                 open && (
-                    <MedicineForm
+                    <MedicineFormModal
                         medicineData={medicineData}
                         setOpenModal={setOpen}
                     />

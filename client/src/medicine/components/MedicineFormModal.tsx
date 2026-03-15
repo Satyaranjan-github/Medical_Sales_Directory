@@ -2,11 +2,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Save, X } from "lucide-react";
 import { useEffect, type Dispatch, type SetStateAction } from 'react';
 import { useForm } from "react-hook-form";
+import type { IMedicine } from '../../types/medicine';
 import useMedicineOperations from '../hooks/useMedicineOperations';
-import type { IMedicine } from "../types/medicine";
-import { medicineSchema } from './medicineSchema';
+import { medicineSchema } from '../validation/medicineSchema';
 
-const MedicineForm = ({ setOpenModal, medicineData }:
+const MedicineFormModal = ({ setOpenModal, medicineData }:
     { setOpenModal: Dispatch<SetStateAction<boolean>>, medicineData?: IMedicine }
 ) => {
     const isUpdate = !!medicineData
@@ -166,4 +166,4 @@ const MedicineForm = ({ setOpenModal, medicineData }:
     )
 }
 
-export default MedicineForm
+export default MedicineFormModal

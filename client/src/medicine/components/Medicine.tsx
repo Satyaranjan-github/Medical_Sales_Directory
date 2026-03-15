@@ -1,8 +1,8 @@
 import { format } from "date-fns";
 import { BadgePercent, BookOpen, ClockPlus, Fingerprint, FolderPen, Hourglass, IndianRupee, Notebook, Percent } from "lucide-react";
 import { useParams } from "react-router-dom";
+import type { IMedicine } from "../../types/medicine";
 import { useGetMedicineByIdQuery } from "../api/medicineApi";
-import type { IMedicine } from "../types/medicine";
 import MedicineActionButton from "./MedicineActionButton";
 
 const Medicine = () => {
@@ -22,7 +22,7 @@ const Medicine = () => {
     }
 
     return (
-        <div className="mx-auto max-w-7xl p-5 space-y-5">
+        <div className="p-5 space-y-5">
             <BasicInformation medicineData={medicine.data} />
             <AdditionalInformation medicineData={medicine.data} />
             <MedicineActionButton medicineData={medicine.data} />
@@ -51,20 +51,20 @@ const AdditionalInformation = ({ medicineData }:
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
                     <div className="flex items-start gap-2 text-bold">
-                        <ClockPlus className="size-5 min-w-fit text-text-default" />
+                        <ClockPlus className="size-5 min-w-fit" />
                         <div>
                             <p className="text-sm font-semibold">
                                 Created At
                             </p>
-                            <p className="text-base text-text-strong">
+                            <p className="text-base">
                                 {medicineData.createdAt && format(medicineData.createdAt, "dd-MM-yyyy")}
                             </p>
                         </div>
                     </div>
                     <div className="flex items-start gap-2">
-                        <ClockPlus className="size-5 min-w-fit text-text-default" />
+                        <ClockPlus className="size-5 min-w-fit" />
                         <div>
-                            <p className="text-sm font-semibold text-text-default">
+                            <p className="text-sm font-semibold">
                                 Updated At
                             </p>
                             <p className="text-base text-text-strong">
@@ -74,12 +74,12 @@ const AdditionalInformation = ({ medicineData }:
                     </div>
                     {medicineData.deletedAt && (
                         <div className="flex items-start gap-2">
-                            <ClockPlus className="size-5 min-w-fit text-text-default" />
+                            <ClockPlus className="size-5 min-w-fit" />
                             <div>
-                                <p className="text-sm font-semibold text-text-default">
+                                <p className="text-sm font-semibold">
                                     Deleted At
                                 </p>
-                                <p className="text-base text-text-strong">
+                                <p className="text-base">
                                     {new Date(medicineData.deletedAt).toLocaleDateString()}
                                 </p>
                             </div>
@@ -103,7 +103,7 @@ const BasicInformation = ({ medicineData }: MedicineDataProps) => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 space-y-2">
                 <div className="flex items-start gap-2 text-bold">
-                    <FolderPen className="size-5 min-w-fit text-text-default" />
+                    <FolderPen className="size-5 min-w-fit" />
                     <div>
                         <p className="text-sm font-semibold">
                             Medicine Name
@@ -114,7 +114,7 @@ const BasicInformation = ({ medicineData }: MedicineDataProps) => {
                     </div>
                 </div>
                 <div className="flex items-start gap-2 text-bold">
-                    <IndianRupee className="size-5 min-w-fit text-text-default" />
+                    <IndianRupee className="size-5 min-w-fit" />
                     <div>
                         <p className="text-sm font-semibold">
                             Cost
@@ -125,7 +125,7 @@ const BasicInformation = ({ medicineData }: MedicineDataProps) => {
                     </div>
                 </div>
                 <div className="flex items-start gap-2 text-bold">
-                    <Percent className="size-5 min-w-fit text-text-default" />
+                    <Percent className="size-5 min-w-fit" />
                     <div>
                         <p className="text-sm font-semibold">
                             Gst
@@ -136,7 +136,7 @@ const BasicInformation = ({ medicineData }: MedicineDataProps) => {
                     </div>
                 </div>
                 <div className="flex items-start gap-2 text-bold">
-                    <BadgePercent className="size-5 min-w-fit text-text-default" />
+                    <BadgePercent className="size-5 min-w-fit" />
                     <div>
                         <p className="text-sm font-semibold">
                             Discount
@@ -147,7 +147,7 @@ const BasicInformation = ({ medicineData }: MedicineDataProps) => {
                     </div>
                 </div>
                 <div className="flex items-start gap-2 text-bold">
-                    <Hourglass className="size-5 min-w-fit text-text-default" />
+                    <Hourglass className="size-5 min-w-fit" />
                     <div>
                         <p className="text-sm font-semibold">
                             Expiry
@@ -159,7 +159,7 @@ const BasicInformation = ({ medicineData }: MedicineDataProps) => {
                 </div>
             </div>
             <div className="flex items-start gap-2 text-bold mt-2">
-                <Notebook className="size-5 min-w-fit text-text-default" />
+                <Notebook className="size-5 min-w-fit" />
                 <div>
                     <p className="text-sm font-semibold">
                         Description
