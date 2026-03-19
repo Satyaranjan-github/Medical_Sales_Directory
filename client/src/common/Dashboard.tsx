@@ -1,7 +1,7 @@
 
 const Dashboard = () => {
     return (
-        <section className="">
+        <section className="p-4 sm:p-6">
             <p>Hello World</p>
         </section>
     )

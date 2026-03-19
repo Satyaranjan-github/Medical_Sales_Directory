@@ -1,12 +1,9 @@
 // RTK Query is used to fetch, cache, and manage server data in Redux apps
 // Used for handling loading, success and error states automatically 
 
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { apiSlice } from '../../apiSlice';
 
-export const medicineApi = createApi({
-    reducerPath: 'medicineApi',
-    baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:9000/api' }),
-    tagTypes: ['Medicine'],
+export const medicineApi = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         getAllMedicines: builder.query({
             query: () => '/medicines',

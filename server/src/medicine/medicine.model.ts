@@ -9,9 +9,7 @@ const medicineSchema = new Schema<IMedicine>({
     expiry: { type: Date },
     description: { type: String },
     isDeleted: { type: Boolean, default: false },
-    deletedAt: { type: Date, default: null },
-    createdAt: { type: Date },
-    updatedAt: { type: Date },
+    deletedAt: { type: Date },
 }, { timestamps: true });
 
 export const Medicine = model<IMedicine>("Medicine", medicineSchema);

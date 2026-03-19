@@ -1,9 +1,9 @@
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import type { IMedicine } from "../../types/medicine";
 import { useGetAllMedicinesQuery } from "../api/medicineApi";
-import type { IMedicine } from "../types/medicine";
-import MedicineForm from "./MedicineForm";
+import MedicineFormModal from "./MedicineFormModal";
 
 const MedicineLists = () => {
     const navigate = useNavigate()
@@ -17,12 +17,13 @@ const MedicineLists = () => {
     }
 
     return (
-        <div className="p-4 space-y-2">
-            <button className="flex justify-center items-center gap-2 p-4 bg-white border border-slate-200 shadow-sm rounded-xl"
+        <div className="p-4 sm:p-6 space-y-4">
+            <button
                 onClick={() => setOpenModal(true)}
+                className="flex items-center gap-3 px-5 py-3 rounded-lg border border-gray-500 shadow-sm"
             >
-                <Plus size={24} />
-                <p className="text-slate-500 text-2xl">Add medicines</p>
+                <Plus size={20} className="text-green-600" />
+                <span className="text-lg font-medium text-green-600">Add Medicines</span>
             </button>
             <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
                 {medicines?.data?.map((med: IMedicine) => (
@@ -71,7 +72,7 @@ const MedicineLists = () => {
             </div>
             {
                 openModal && (
-                    <MedicineForm setOpenModal={setOpenModal} />
+                    <MedicineFormModal setOpenModal={setOpenModal} />
                 )
             }
         </div >

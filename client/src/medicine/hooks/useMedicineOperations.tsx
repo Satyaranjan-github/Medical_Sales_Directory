@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
+import type { IMedicine } from "../../types/medicine";
 import { useCreateMedicineMutation, useDeleteMedicineMutation, useLazyGetMedicineByIdQuery, useRestoreMedicineMutation, useUpdateMedicineMutation } from "../api/medicineApi";
 import { clearSelectedMedicine, updateMedicineInList } from "../redux/medicineSlice";
-import type { IMedicine } from "../types/medicine";
 
 function useMedicineOperations() {
     const dispatch = useDispatch()

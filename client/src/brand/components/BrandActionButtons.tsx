@@ -1,12 +1,12 @@
 import { Eye, Pencil, Trash, Undo } from "lucide-react"
 import { useState } from "react"
-import useMedicineOperations from "../hooks/useMedicineOperations"
-import type { IMedicine } from "../types/medicine"
-import MedicineForm from "./MedicineForm"
+import type { IBrand } from "../../types/brand"
+import useBrandOperations from "../hooks/useBrandOperations"
+import BrandFormModal from "./BrandFormModal"
 
-const MedicineActionButton = ({ medicineData }: { medicineData: IMedicine }) => {
+const BrandActionButtons = ({ brandData }: { brandData: IBrand }) => {
     const [open, setOpen] = useState(false)
-    const { deleteMedicine, restoreMedicine } = useMedicineOperations()
+    const { deleteBrand, restoreBrand } = useBrandOperations()
 
     return (
         <section className="rounded-lg border p-4 sm:p-6 border-gray-400">
@@ -18,32 +18,32 @@ const MedicineActionButton = ({ medicineData }: { medicineData: IMedicine }) => 
                 </h3>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {!medicineData.isDeleted && (
+                {!brandData.isDeleted && (
                     <>
                         <div className="flex items-center justify-center gap-2 text-bold rounded-lg border border-gray-500 p-2 cursor-pointer">
                             <Pencil className="size-5 min-w-fit " />
                             <button onClick={() => { setOpen(true) }}>
                                 <p className="text-sm font-semibold">
-                                    Update Medicine
+                                    Update Brand
                                 </p>
                             </button>
                         </div>
                         <div className="flex items-center justify-center gap-2 text-bold rounded-lg border border-gray-500 p-2 cursor-pointer">
                             <Trash className="size-5 min-w-fit" />
-                            <button onClick={() => deleteMedicine(medicineData._id as string)}>
+                            <button onClick={() => deleteBrand(brandData._id as string)}>
                                 <p className="text-sm font-semibold">
-                                    Delete Medicine
+                                    Delete Brand
                                 </p>
                             </button>
                         </div>
                     </>
                 )}
-                {medicineData.isDeleted && (
+                {brandData.isDeleted && (
                     <div className="flex items-center justify-center gap-2 text-bold rounded-lg border border-gray-500 p-2 cursor-pointer">
                         <Undo className="size-5 min-w-fit" />
-                        <button onClick={() => restoreMedicine(medicineData._id as string)}>
+                        <button onClick={() => restoreBrand(brandData._id as string)}>
                             <p className="text-sm font-semibold">
-                                Restore Medicine
+                                Restore Brand
                             </p>
                         </button>
                     </div>
@@ -51,8 +51,8 @@ const MedicineActionButton = ({ medicineData }: { medicineData: IMedicine }) => 
             </div>
             {
                 open && (
-                    <MedicineForm
-                        medicineData={medicineData}
+                    <BrandFormModal
+                        brandData={brandData}
                         setOpenModal={setOpen}
                     />
                 )
@@ -61,4 +61,4 @@ const MedicineActionButton = ({ medicineData }: { medicineData: IMedicine }) => 
     )
 }
 
-export default MedicineActionButton
+export default BrandActionButtons
