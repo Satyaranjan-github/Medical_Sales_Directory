@@ -1,43 +1,45 @@
-import { format } from "date-fns";
-import { BadgePercent, BookOpen, ClockPlus, Fingerprint, FolderPen, Hourglass, IndianRupee, Notebook, Percent } from "lucide-react";
-import { useParams } from "react-router-dom";
-import type { IMedicine } from "../../types/medicine";
-import { useGetMedicineByIdQuery } from "../api/medicineApi";
-import MedicineActionButton from "./MedicineActionButton";
+import { format } from "date-fns"
+import { BookOpen, CheckSquare, ClockPlus, Fingerprint, FolderPen } from "lucide-react"
+import { useParams } from "react-router-dom"
+import type { IBrand } from "../../types/brand"
+import { useGetBrandByIdQuery } from "../api/brandApi"
+import BrandActionButtons from "./BrandActionButtons"
 
-const Medicine = () => {
-    const { id: medicineId } = useParams()
-    const { data: medicine, isLoading, isError } = useGetMedicineByIdQuery(medicineId as string);
+const Brand = () => {
+    const { id: brandId } = useParams()
+    const { data: brand, isLoading, isError } = useGetBrandByIdQuery(brandId as string);
 
     if (isLoading) {
         return (
             <div className="flex justify-center p-10">
-                <span className="loading loading-spinner text-primary">Loading medicine details...</span>
+                <span className="loading loading-spinner text-primary">Loading brand details...</span>
             </div>
         );
     }
 
-    if (isError || !medicine) {
-        return <div className="p-10 text-red-500">Medicine not found!</div>;
+    if (isError || !brand) {
+        return <div className="p-10 text-red-500">Brand not found!</div>;
     }
+
 
     return (
         <div className="p-4 sm:p-6 space-y-4">
-            <BasicInformation medicineData={medicine.data} />
-            <AdditionalInformation medicineData={medicine.data} />
-            <MedicineActionButton medicineData={medicine.data} />
-        </div >
-    );
+            <BasicInformation brandData={brand.data} />
+            <AdditionalInformation brandData={brand.data} />
+            <BrandActionButtons brandData={brand.data} />
+        </div>
+    )
 }
 
-export default Medicine
+export default Brand
 
-interface MedicineDataProps {
-    medicineData: IMedicine
+
+interface BrandDataProps {
+    brandData: IBrand
 }
 
-const AdditionalInformation = ({ medicineData }:
-    MedicineDataProps
+const AdditionalInformation = ({ brandData }:
+    BrandDataProps
 ) => {
     return (
         <section className="rounded-lg border p-4 sm:p-6 border-gray-400">
@@ -57,7 +59,7 @@ const AdditionalInformation = ({ medicineData }:
                                 Created At
                             </p>
                             <p className="text-base">
-                                {medicineData.createdAt && format(medicineData.createdAt, "dd-MM-yyyy")}
+                                {brandData.createdAt && format(brandData.createdAt, "dd-MM-yyyy")}
                             </p>
                         </div>
                     </div>
@@ -68,11 +70,11 @@ const AdditionalInformation = ({ medicineData }:
                                 Updated At
                             </p>
                             <p className="text-base text-text-strong">
-                                {medicineData.updatedAt && format(medicineData.updatedAt, "dd-MM-yyyy")}
+                                {brandData.updatedAt && format(brandData.updatedAt, "dd-MM-yyyy")}
                             </p>
                         </div>
                     </div>
-                    {medicineData.deletedAt && (
+                    {brandData.deletedAt && (
                         <div className="flex items-start gap-2">
                             <ClockPlus className="size-5 min-w-fit" />
                             <div>
@@ -80,7 +82,7 @@ const AdditionalInformation = ({ medicineData }:
                                     Deleted At
                                 </p>
                                 <p className="text-base">
-                                    {new Date(medicineData.deletedAt).toLocaleDateString()}
+                                    {new Date(brandData.deletedAt).toLocaleDateString()}
                                 </p>
                             </div>
                         </div>
@@ -91,10 +93,9 @@ const AdditionalInformation = ({ medicineData }:
     )
 }
 
-const BasicInformation = ({ medicineData }: MedicineDataProps) => {
+const BasicInformation = ({ brandData }: BrandDataProps) => {
     return (
         <section className="rounded-lg border p-4 sm:p-6 border-gray-400">
-            { /* Header Section */}
             <div className="flex gap-2 items-start mb-4 font-extrabold">
                 <Fingerprint size={24} className="text-green-600" />
                 <h3 className="text-xl font-extrabold leading-tight text-green-600">
@@ -106,66 +107,33 @@ const BasicInformation = ({ medicineData }: MedicineDataProps) => {
                     <FolderPen className="size-5 min-w-fit" />
                     <div>
                         <p className="text-sm font-semibold">
-                            Medicine Name
+                            Brand Name
                         </p>
                         <p className="text-base text-text-strong">
-                            {medicineData.name}
+                            {brandData.name}
                         </p>
                     </div>
                 </div>
                 <div className="flex items-start gap-2 text-bold">
-                    <IndianRupee className="size-5 min-w-fit" />
+                    <CheckSquare className="size-5 min-w-fit" />
                     <div>
                         <p className="text-sm font-semibold">
-                            Cost
+                            Is Active
                         </p>
                         <p className="text-base text-text-strong">
-                            {medicineData.cost}
-                        </p>
-                    </div>
-                </div>
-                <div className="flex items-start gap-2 text-bold">
-                    <Percent className="size-5 min-w-fit" />
-                    <div>
-                        <p className="text-sm font-semibold">
-                            Gst
-                        </p>
-                        <p className="text-base text-text-strong">
-                            {medicineData.gst}%
-                        </p>
-                    </div>
-                </div>
-                <div className="flex items-start gap-2 text-bold">
-                    <BadgePercent className="size-5 min-w-fit" />
-                    <div>
-                        <p className="text-sm font-semibold">
-                            Discount
-                        </p>
-                        <p className="text-base text-text-strong">
-                            {medicineData.discount}
-                        </p>
-                    </div>
-                </div>
-                <div className="flex items-start gap-2 text-bold">
-                    <Hourglass className="size-5 min-w-fit" />
-                    <div>
-                        <p className="text-sm font-semibold">
-                            Expiry
-                        </p>
-                        <p className="text-base text-text-strong">
-                            {format(medicineData.expiry, "dd-MM-yyyy")}
+                            {brandData.isActive ? "Yes" : "No"}
                         </p>
                     </div>
                 </div>
             </div>
-            <div className="flex items-start gap-2 text-bold mt-2">
-                <Notebook className="size-5 min-w-fit" />
+            <div className="flex items-start gap-2 text-bold">
+                <FolderPen className="size-5 min-w-fit" />
                 <div>
                     <p className="text-sm font-semibold">
                         Description
                     </p>
                     <p className="text-base text-text-strong">
-                        {medicineData.description}
+                        {brandData.description}
                     </p>
                 </div>
             </div>

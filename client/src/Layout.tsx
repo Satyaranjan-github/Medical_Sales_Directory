@@ -1,5 +1,6 @@
 import { LayoutDashboard, Pill, Settings, Tag, type LucideIcon } from "lucide-react";
 import { NavLink, Route, Routes } from "react-router-dom";
+import Brand from "./brand/components/Brand";
 import BrandLists from "./brand/components/BrandLists";
 import Dashboard from "./common/Dashboard";
 import Navbar from "./common/Navbar";
@@ -36,6 +37,7 @@ export const Layout = () => {
                         <Route path="/medicines" element={<MedicineLists />} />
                         <Route path="/medicines/:id" element={<Medicine />} />
                         <Route path="/brands" element={<BrandLists />} />
+                        <Route path="/brands/:id" element={<Brand />} />
                     </Routes>
                 </div>
             </div>

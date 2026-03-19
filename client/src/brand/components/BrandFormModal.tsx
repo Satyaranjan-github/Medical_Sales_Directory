@@ -33,6 +33,7 @@ const BrandFormModal = ({
             await updateBrand(data)
         } else {
             await createBrand(data)
+            setOpenModal(false)
         }
         setOpenModal(false)
     }
@@ -86,7 +87,7 @@ const BrandFormModal = ({
                         <div>
                             <input
                                 type="checkbox"
-                                {...register("isDeleted")}
+                                {...register("isActive")}
                                 className="mr-2"
                             />
                             Is Active
