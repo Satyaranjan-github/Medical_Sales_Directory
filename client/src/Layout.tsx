@@ -2,6 +2,8 @@ import { LayoutDashboard, Pill, Settings, Tag, type LucideIcon } from "lucide-re
 import { NavLink, Route, Routes } from "react-router-dom";
 import Brand from "./brand/components/Brand";
 import BrandLists from "./brand/components/BrandLists";
+import Category from "./category/components/Category";
+import CategoryLists from "./category/components/CategoryLists";
 import Dashboard from "./common/Dashboard";
 import Navbar from "./common/Navbar";
 import Medicine from "./medicine/components/Medicine";
@@ -20,11 +22,12 @@ export const Layout = () => {
                     <SidebarLink to="/" label="Dashboard" Icon={LayoutDashboard} />
                     <SidebarLink to="/medicines" label="Medicines" Icon={Pill} />
                     <SidebarLink to="/brands" label="Brands" Icon={Tag} />
+                    <SidebarLink to="/categories" label="Categories" Icon={Tag} />
                     <SidebarLink to="/settings" label="Settings" Icon={Settings} />
                 </nav>
 
                 <div className="p-4 border-t border-slate-100 text-xs text-slate-400">
-                    v1.0.2 AR Robotics India
+                    v1.0.2 MediSync
                 </div>
             </aside>
 
@@ -38,6 +41,8 @@ export const Layout = () => {
                         <Route path="/medicines/:id" element={<Medicine />} />
                         <Route path="/brands" element={<BrandLists />} />
                         <Route path="/brands/:id" element={<Brand />} />
+                        <Route path="/categories" element={<CategoryLists />} />
+                        <Route path="/categories/:id" element={<Category />} />
                     </Routes>
                 </div>
             </div>

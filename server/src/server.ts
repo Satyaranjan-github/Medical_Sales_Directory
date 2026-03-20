@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import express from 'express'
 import mongoose from 'mongoose'
 import brandRoutes from "../src/brand/brand.route"
+import categoryRoutes from '../src/category/category.route'
 import medicineRoutes from '../src/medicine/medicine.route'
 
 dotenv.config()
@@ -21,6 +22,7 @@ app.use(cors({
 
 app.use("/api/medicines", medicineRoutes)
 app.use("/api/brands", brandRoutes)
+app.use("/api/categories", categoryRoutes)
 
 app.get('/', (req, res) => {
     res.send('Hello World!')
