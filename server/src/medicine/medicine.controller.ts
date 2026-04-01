@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { createMedicine, deleteMedicine, deleteMedicinePermanently, getAllMedicines, getMedicineById, restoreMedicine, updateMedicine } from "./medicine.service";
+import { createMedicine, deleteMedicine, deleteMedicinePermanently, getAllMedicines, getMedicineById, medicineSuggestions, restoreMedicine, updateMedicine } from "./medicine.service";
 
 
 export const createMedicineController = async (req: Request, res: Response) => {
@@ -39,7 +39,7 @@ export const getMedicineByIdController = async (req: Request, res: Response) => 
 export const updateMedicineController = async (req: Request, res: Response) => {
     const { id } = req.params;
     const medicineData = req.body;
-    
+
     const updatedMedicine = await updateMedicine(id as string, medicineData);
 
     res.status(200).json({
@@ -81,6 +81,17 @@ export const deleteMedicinePermanentlyController = async (req: Request, res: Res
     res.status(200).json({
         message: "Medicine Permanently Deleted Successfully",
         data: deletedMedicine,
+        success: true
+    });
+}
+
+export const medicineSuggestionsController = async (req: Request, res: Response) => {
+    const { query } = req.query;
+    const suggestions = await medicineSuggestions(query as string);
+
+    res.status(200).json({
+        message: "Medicine Suggestions Fetched Successfully",
+        data: suggestions,
         success: true
     });
 }

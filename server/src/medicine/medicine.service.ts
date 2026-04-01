@@ -52,3 +52,10 @@ export const deleteMedicinePermanently = async (id: string) => {
 
     return await Medicine.findByIdAndDelete(id);
 }
+
+export const medicineSuggestions = async (query: string) => {
+    return await Medicine.find({
+        name: { $regex: query, $options: "i" },
+        isDeleted: false
+    }).select("_id name");
+}

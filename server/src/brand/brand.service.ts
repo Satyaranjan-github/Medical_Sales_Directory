@@ -55,3 +55,10 @@ export const deleteBrandPermanently = async (id: string) => {
 
     return await Brand.findByIdAndDelete(id);
 }
+
+export const brandSuggestions = async (query: string) => {
+    return await Brand.find({
+        name: { $regex: query, $options: "i" },
+        isDeleted: false
+    }).select("_id name");
+}

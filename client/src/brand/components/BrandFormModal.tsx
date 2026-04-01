@@ -53,7 +53,7 @@ const BrandFormModal = ({
                 <form className="p-4 sm:p-6" onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex items-center justify-between">
                         <h3 className="text-xl font-bold text-slate-800">{isUpdate ? "Update" : "Add"} Brand</h3>
-                        <button onClick={() => setOpenModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
+                        <button onClick={() => setOpenModal(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer">
                             <X size={20} />
                         </button>
                     </div>

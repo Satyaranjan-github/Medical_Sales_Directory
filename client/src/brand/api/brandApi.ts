@@ -46,7 +46,13 @@ export const brandApi = apiSlice.injectEndpoints({
                 method: 'DELETE',
             }),
             invalidatesTags: ['Brand'],
-        })
+        }),
+        getBrandSuggestions: builder.query({
+            query: (query) => ({
+                url: '/brands/suggestions',
+                params: { query },
+            })
+        }),
     })
 })
 
@@ -59,5 +65,6 @@ export const {
     useUpdateBrandMutation,
     useDeleteBrandPermanentlyMutation,
     useLazyGetAllBrandsQuery,
-    useLazyGetBrandByIdQuery
+    useLazyGetBrandByIdQuery,
+    useLazyGetBrandSuggestionsQuery
 } = brandApi

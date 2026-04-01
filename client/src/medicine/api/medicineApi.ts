@@ -50,6 +50,12 @@ export const medicineApi = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ['Medicine'],
         }),
+        getMedicineSuggestions: builder.query({
+            query: (query) => ({
+                url: '/medicines/suggestions',
+                params: { query },
+            })
+        }),
     })
 });
 
@@ -62,5 +68,6 @@ export const {
     useUpdateMedicineMutation,
     useDeleteMedicinePermanentlyMutation,
     useLazyGetAllMedicinesQuery,
-    useLazyGetMedicineByIdQuery
+    useLazyGetMedicineByIdQuery,
+    useLazyGetMedicineSuggestionsQuery
 } = medicineApi;

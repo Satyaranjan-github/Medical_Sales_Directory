@@ -1,14 +1,16 @@
-import { Plus } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { IMedicine } from "../../types/medicine";
 import { useGetAllMedicinesQuery } from "../api/medicineApi";
 import MedicineFormModal from "./MedicineFormModal";
+import MedicineSearch from "./MedicineSearch";
 
 const MedicineLists = () => {
     const navigate = useNavigate()
     const { data: medicines, isLoading } = useGetAllMedicinesQuery(undefined)
     const [openModal, setOpenModal] = useState(false)
+    const [openSearchModal, setOpenSearchModal] = useState(false)
 
     if (isLoading) {
         return (
@@ -18,13 +20,20 @@ const MedicineLists = () => {
 
     return (
         <div className="p-4 sm:p-6 space-y-4">
-            <button
-                onClick={() => setOpenModal(true)}
-                className="flex items-center gap-3 px-5 py-3 rounded-lg border border-gray-500 shadow-sm"
-            >
-                <Plus size={20} className="text-green-600" />
-                <span className="text-lg font-medium text-green-600">Add Medicines</span>
-            </button>
+            <div className="flex gap-4">
+                <button
+                    onClick={() => setOpenModal(true)}
+                    className="flex items-center gap-3 px-5 py-3 rounded-lg border border-gray-500 shadow-sm"
+                >
+                    <Plus size={20} className="text-green-600" />
+                    <span className="text-lg font-medium text-green-600">Add Medicines</span>
+                </button>
+                <button className="flex items-center gap-3 px-5 py-3 rounded-lg border border-gray-500 shadow-sm cursor-pointer"
+                    onClick={() => setOpenSearchModal(true)}>
+                    <Search size={20} className="text-gray-500" />
+                    <span className="text-lg font-medium text-gray-500">Search Medicines....</span>
+                </button >
+            </div>
             <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
                 {medicines?.data?.map((med: IMedicine) => (
                     <div
@@ -75,6 +84,9 @@ const MedicineLists = () => {
                     <MedicineFormModal setOpenModal={setOpenModal} />
                 )
             }
+            {openSearchModal && (
+                <MedicineSearch setOpenSearchModal={setOpenSearchModal} />
+            )}
         </div >
     )
 }
