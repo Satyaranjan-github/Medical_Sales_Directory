@@ -19,74 +19,113 @@ const MedicineLists = () => {
     }
 
     return (
-        <div className="p-4 sm:p-6 space-y-4">
-            <div className="flex gap-4">
+        <div className="p-4 sm:p-6 space-y-6 bg-slate-50 min-h-screen">
+
+            {/* Top Actions */}
+            <div className="flex flex-col sm:flex-row gap-4">
                 <button
                     onClick={() => setOpenModal(true)}
-                    className="flex items-center gap-3 px-5 py-3 rounded-lg border border-gray-500 shadow-sm"
+                    className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-green-600 text-white font-semibold shadow-md hover:bg-green-700 transition-all"
                 >
-                    <Plus size={20} className="text-green-600" />
-                    <span className="text-lg font-medium text-green-600">Add Medicines</span>
+                    <Plus size={18} />
+                    Add Medicines
                 </button>
-                <button className="flex items-center gap-3 px-5 py-3 rounded-lg border border-gray-500 shadow-sm cursor-pointer"
-                    onClick={() => setOpenSearchModal(true)}>
-                    <Search size={20} className="text-gray-500" />
-                    <span className="text-lg font-medium text-gray-500">Search Medicines....</span>
-                </button >
+
+                <button
+                    onClick={() => setOpenSearchModal(true)}
+                    className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-slate-300 bg-white text-slate-600 font-medium shadow-sm hover:shadow-md hover:bg-slate-100 transition-all"
+                >
+                    <Search size={18} />
+                    Search Medicines
+                </button>
             </div>
-            <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+
+            {/* Medicines Grid */}
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
                 {medicines?.data?.map((med: IMedicine) => (
                     <div
                         key={med._id}
-                        className={`p-5 border border-slate-200 shadow-sm rounded-xl cursor-pointer ${med.isDeleted ? "bg-red-500" : "bg-white "}`}
                         onClick={() => navigate(`/medicines/${med._id}`)}
+                        className={`group relative p-5 rounded-2xl border transition-all duration-300 cursor-pointer
+                ${med.isDeleted
+                                ? "bg-red-50 border-red-200"
+                                : "bg-white border-slate-200"
+                            }`}
                     >
-                        {/* Header Section */}
-                        <div className="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 className="text-lg font-extrabold text-slate-800 leading-tight">
-                                    {med.name}
-                                </h3>
-                            </div>
-                            <div className="text-right">
-                                <span className="text-sm font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                        {/* Header */}
+                        <div className="flex justify-between items-start gap-3 mb-4">
+                            <h3 className="text-base font-bold text-slate-800 leading-snug group-hover:text-green-600 transition">
+                                {med.name}
+                            </h3>
+                            <div className="flex flex-col items-end">
+                                <span className="text-sm font-semibold text-green-700 bg-green-50 px-2.5 py-1 rounded-md">
                                     ₹{med.cost}
                                 </span>
                                 {med.discount > 0 && (
-                                    <p className="text-[10px] text-green-600 font-bold mt-1">
+                                    <span className="text-[10px] text-green-600 font-bold mt-1">
                                         {med.discount}% OFF
-                                    </p>
+                                    </span>
                                 )}
                             </div>
                         </div>
 
-                        {/* Data Grid Section */}
-                        <div className="grid grid-cols-2 gap-y-3 border-t border-slate-50 pt-4">
-                            <div className="flex flex-col">
-                                <span className="text-[10px] font-bold text-slate-400 uppercase">Expiry Date</span>
+                        {/* Divider */}
+                        <div className="h-px bg-slate-100 mb-4" />
+
+                        {/* Details */}
+                        <div className="space-y-3">
+                            {/* Expiry */}
+                            <div className="flex justify-between items-center">
+                                <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">
+                                    Expiry Date
+                                </span>
                                 <span className="text-sm font-semibold text-slate-700">
-                                    {new Date(med.expiry).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                    {new Date(med.expiry).toLocaleDateString('en-IN', {
+                                        day: '2-digit',
+                                        month: 'short',
+                                        year: 'numeric'
+                                    })}
                                 </span>
                             </div>
 
-                            <div className="flex flex-col col-span-2">
-                                <span className="text-[10px] font-bold text-slate-400 uppercase">Entry Date</span>
+                            {/* Created */}
+                            <div className="flex justify-between items-center">
+                                <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">
+                                    Created
+                                </span>
                                 <span className="text-xs text-slate-500">
-                                    Registered on {med.createdAt ? new Date(med.createdAt).toLocaleString() : "-"}
+                                    {med.createdAt
+                                        ? new Date(med.createdAt).toLocaleDateString()
+                                        : "-"}
                                 </span>
                             </div>
                         </div>
+
+                        {/* Subtle Hover Accent */}
+                        <div className="absolute inset-0 rounded-2xl border border-transparent group-hover:border-green-100 pointer-events-none" />
+
+                        {/* Deleted Badge */}
+                        {med.isDeleted && (
+                            <span className="absolute top-2 right-2 text-[10px] bg-red-500 text-white px-2 py-0.5 rounded-full shadow-sm">
+                                Deleted
+                            </span>
+                        )}
                     </div>
                 ))}
             </div>
+
+            {/* Modals */}
             {
                 openModal && (
                     <MedicineFormModal setOpenModal={setOpenModal} />
                 )
             }
-            {openSearchModal && (
-                <MedicineSearch setOpenSearchModal={setOpenSearchModal} />
-            )}
+
+            {
+                openSearchModal && (
+                    <MedicineSearch setOpenSearchModal={setOpenSearchModal} />
+                )
+            }
         </div >
     )
 }

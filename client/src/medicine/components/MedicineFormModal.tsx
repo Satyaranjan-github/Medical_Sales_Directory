@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Save, X } from "lucide-react";
 import { useEffect, type Dispatch, type SetStateAction } from 'react';
 import { useForm } from "react-hook-form";
+import BrandSelect from '../../brand/components/BrandSelect';
 import type { IMedicine } from '../../types/medicine';
 import useMedicineOperations from '../hooks/useMedicineOperations';
 import { medicineSchema } from '../validation/medicineSchema';
@@ -15,6 +16,7 @@ const MedicineFormModal = ({ setOpenModal, medicineData }:
         register,
         handleSubmit,
         reset,
+        control,
         formState: { errors }
     } =
         useForm<IMedicine>({
@@ -32,7 +34,7 @@ const MedicineFormModal = ({ setOpenModal, medicineData }:
         }
         setOpenModal(false)
     }
-
+    console.log("Error=>", errors)
     useEffect(() => {
         if (!medicineData) return
 
@@ -130,6 +132,16 @@ const MedicineFormModal = ({ setOpenModal, medicineData }:
                                     <span className="text-xs text-red-500">{errors.expiry.message}</span>
                                 )}
                             </div>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-bold text-slate-700 mb-1"
+                                htmlFor="brand"
+                            >Brand
+                            </label>
+                            <BrandSelect
+                                name='brand'
+                                control={control}
+                            />
                         </div>
                         <div>
                             <label className="block text-sm font-bold text-slate-700 mb-1"
