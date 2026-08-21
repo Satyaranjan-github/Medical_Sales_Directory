@@ -19,22 +19,28 @@ const BrandLists = () => {
     }
 
     return (
-        <div className="p-4 sm:p-6">
-            <div className="flex gap-4">
+        <div className="p-4 sm:p-6 space-y-6 bg-slate-50 min-h-screen">
+
+            {/* Top Actions */}
+            <div className="flex flex-col sm:flex-row gap-4">
                 <button
                     onClick={() => setOpenModal(true)}
-                    className="flex items-center gap-3 px-5 py-3 rounded-lg border border-gray-500 shadow-sm cursor-pointer"
+                    className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-green-600 text-white font-semibold shadow-md hover:bg-green-700 transition-all"
                 >
-                    <Plus size={20} className="text-green-600" />
-                    <span className="text-lg font-medium text-green-600">Add Brands</span>
+                    <Plus size={18} />
+                    Add Brands
                 </button>
-                <button className="flex items-center gap-3 px-5 py-3 rounded-lg border border-gray-500 shadow-sm cursor-pointer"
-                    onClick={() => setOpenSearchModal(true)}>
-                    <Search size={20} className="text-gray-500" />
-                    <span className="text-lg font-medium text-gray-500">Search Brands....</span>
-                </button >
+
+                <button
+                    onClick={() => setOpenSearchModal(true)}
+                    className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-slate-300 bg-white text-slate-600 font-medium shadow-sm hover:shadow-md hover:bg-slate-100 transition-all"
+                >
+                    <Search size={18} />
+                    Search Brands
+                </button>
             </div>
-            <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
                 {brands?.data?.map((brand: IBrand) => (
                     <BrandCard key={brand._id} brand={brand} />
                 ))}
@@ -52,8 +58,8 @@ export const BrandCard = ({ brand }: { brand: IBrand }) => {
     const navigate = useNavigate()
 
     return (
-        <div className="p-5 sm:p-6 border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer bg-white mt-4 sm:mt-6" onClick={() => navigate(`/brands/${brand._id}`)}>
-            <h3 className="text-lg font-semibold text-slate-800 mb-4">
+        <div className="p-5 sm:p-6 border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer bg-white" onClick={() => navigate(`/brands/${brand._id}`)}>
+            <h3 className="text-base font-bold text-slate-800 leading-snug group-hover:text-green-600 transition">
                 {brand.name}
             </h3>
             <div className="border-t border-slate-100 mb-4"></div>

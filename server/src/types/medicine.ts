@@ -6,6 +6,7 @@ export interface IMedicine extends Document {
     gst: number;
     discount: number;
     brand: Types.ObjectId | string;
+    category: Types.ObjectId | string;
     expiry: Date;
     description?: string;
     isDeleted?: boolean;

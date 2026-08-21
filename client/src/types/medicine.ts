@@ -1,4 +1,5 @@
 import type { IBrand } from "./brand";
+import type { ICategory } from "./category";
 
 export interface IMedicine {
     _id?: string;
@@ -6,11 +7,12 @@ export interface IMedicine {
     cost: number;
     gst: number;
     discount: number;
-    brand: IBrand | string
+    brand: IBrand
+    category: ICategory
     expiry: Date;
     description?: string;
     isDeleted?: boolean;
-    createdAt?: Date;  //completed
-    updatedAt?: Date;  //completed
-    deletedAt?: Date;  //completed
+    createdAt?: Date;
+    updatedAt?: Date;
+    deletedAt?: Date;
 }
