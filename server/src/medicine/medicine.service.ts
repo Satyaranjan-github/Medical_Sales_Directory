@@ -3,6 +3,7 @@ import { Medicine } from "./medicine.model";
 
 const populatedFields = [
     { path: "brand", select: "_id name" },
+    { path: "category", select: "_id name" },
 ];
 
 export const createMedicine = async (medicineData: IMedicine) => {

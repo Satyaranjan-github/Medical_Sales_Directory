@@ -3,6 +3,7 @@ import { Save, X } from "lucide-react";
 import { useEffect, type Dispatch, type SetStateAction } from 'react';
 import { useForm } from "react-hook-form";
 import BrandSelect from '../../brand/components/BrandSelect';
+import CategorySelect from '../../category/components/CategorySelect';
 import type { IMedicine } from '../../types/medicine';
 import useMedicineOperations from '../hooks/useMedicineOperations';
 import { medicineSchema } from '../validation/medicineSchema';
@@ -140,6 +141,16 @@ const MedicineFormModal = ({ setOpenModal, medicineData }:
                             </label>
                             <BrandSelect
                                 name='brand'
+                                control={control}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-bold text-slate-700 mb-1"
+                                htmlFor="category"
+                            >Category
+                            </label>
+                            <CategorySelect
+                                name='category'
                                 control={control}
                             />
                         </div>

@@ -7,6 +7,7 @@ const medicineSchema = new Schema<IMedicine>({
     gst: { type: Number },
     discount: { type: Number },
     brand: { type: Schema.Types.ObjectId, ref: "Brand" },
+    category: { type: Schema.Types.ObjectId, ref: "Category" },
     expiry: { type: Date },
     description: { type: String },
     isDeleted: { type: Boolean, default: false },
