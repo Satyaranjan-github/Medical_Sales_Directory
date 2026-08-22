@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { createCategory, deleteCategory, deleteCategoryPermanently, getAllCategories, getCategoryById, restoreCategory, updateCategory } from "./category.service";
+import { categorySuggestions, createCategory, deleteCategory, deleteCategoryPermanently, getAllCategories, getCategoryById, restoreCategory, updateCategory } from "./category.service";
 
 
 export const createCategoryController = async (req: Request, res: Response) => {
@@ -80,6 +80,17 @@ export const deleteCategoryPermanentlyController = async (req: Request, res: Res
     res.status(200).json({
         message: "Category Permanently Deleted Successfully",
         data: deletedCategory,
+        success: true
+    });
+}
+
+export const categorySuggestionsController = async (req: Request, res: Response) => {
+    const { query } = req.query;
+    const suggestions = await categorySuggestions(query as string);
+
+    res.status(200).json({
+        message: "Category Suggestions Fetched Successfully",
+        data: suggestions,
         success: true
     });
 }

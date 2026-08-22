@@ -2,6 +2,7 @@ import cors from "cors"
 import dotenv from 'dotenv'
 import express from 'express'
 import mongoose from 'mongoose'
+import morgan from "morgan"
 import brandRoutes from "../src/brand/brand.route"
 import categoryRoutes from '../src/category/category.route'
 import medicineRoutes from '../src/medicine/medicine.route'
@@ -12,6 +13,7 @@ const app = express()
 const PORT = process.env.PORT
 const MONGO_URI = process.env.MONGO_URI
 app.use(express.json())
+app.use(morgan("dev"))
 
 // 2. Configure CORS
 app.use(cors({

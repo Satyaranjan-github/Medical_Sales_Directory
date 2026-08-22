@@ -55,3 +55,10 @@ export const deleteCategoryPermanently = async (id: string) => {
 
     return await Category.findByIdAndDelete(id);
 }
+
+export const categorySuggestions = async (query: string) => {
+    return await Category.find({
+        name: { $regex: query, $options: "i" },
+        isDeleted: false
+    }).select("_id name");
+}
