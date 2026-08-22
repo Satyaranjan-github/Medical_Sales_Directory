@@ -1,6 +1,8 @@
 import { format } from "date-fns";
-import { BadgePercent, BookOpen, ClockPlus, Fingerprint, FolderPen, Hourglass, IndianRupee, Notebook, Percent } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { BadgePercent, BookOpen, ClockPlus, Fingerprint, FolderPen, Hourglass, IndianRupee, Notebook, Percent, Tag } from "lucide-react";
+import { Link, useParams } from "react-router-dom";
+import type { IBrand } from "../../types/brand";
+import type { ICategory } from "../../types/category";
 import type { IMedicine } from "../../types/medicine";
 import { useGetMedicineByIdQuery } from "../api/medicineApi";
 import MedicineActionButton from "./MedicineActionButton";
@@ -155,6 +157,28 @@ const BasicInformation = ({ medicineData }: MedicineDataProps) => {
                         <p className="text-base text-text-strong">
                             {format(medicineData.expiry, "dd-MM-yyyy")}
                         </p>
+                    </div>
+                </div>
+                <div className="flex items-start gap-2 text-bold">
+                    <Tag className="size-5 min-w-fit" />
+                    <div>
+                        <p className="text-sm font-semibold">
+                            Brand
+                        </p>
+                        <Link to={`/brands/${(medicineData.brand as IBrand)?._id}`} className="hover:text-green-600 hover:underline">
+                            {medicineData?.brand && (medicineData.brand as IBrand).name}
+                        </Link>
+                    </div>
+                </div>
+                <div className="flex items-start gap-2 text-bold">
+                    <Tag className="size-5 min-w-fit" />
+                    <div>
+                        <p className="text-sm font-semibold">
+                            Category
+                        </p>
+                        <Link to={`/categories/${(medicineData.category as ICategory)?._id}`} className="hover:text-green-600 hover:underline">
+                            {medicineData?.category && (medicineData.category as ICategory).name}
+                        </Link>
                     </div>
                 </div>
             </div>

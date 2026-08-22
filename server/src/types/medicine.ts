@@ -1,10 +1,12 @@
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 export interface IMedicine extends Document {
     name: string;
     cost: number;
     gst: number;
     discount: number;
+    brand: Types.ObjectId | string;
+    category: Types.ObjectId | string;
     expiry: Date;
     description?: string;
     isDeleted?: boolean;

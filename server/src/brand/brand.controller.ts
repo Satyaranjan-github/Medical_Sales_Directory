@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { createBrand, deleteBrand, deleteBrandPermanently, getAllBrands, getBrandById, restoreBrand, updateBrand } from "./brand.service";
+import { brandSuggestions, createBrand, deleteBrand, deleteBrandPermanently, getAllBrands, getBrandById, restoreBrand, updateBrand } from "./brand.service";
 
 export const createBrandController = async (req: Request, res: Response) => {
     const brandData = req.body;
@@ -79,6 +79,17 @@ export const deleteBrandPermanentlyController = async (req: Request, res: Respon
     res.status(200).json({
         message: "Brand Permanently Deleted Successfully",
         data: deletedBrand,
+        success: true
+    });
+}
+
+export const brandSuggestionsController = async (req: Request, res: Response) => {
+    const { query } = req.query;
+    const suggestions = await brandSuggestions(query as string);
+
+    res.status(200).json({
+        message: "Brand Suggestions Fetched Successfully",
+        data: suggestions,
         success: true
     });
 }
