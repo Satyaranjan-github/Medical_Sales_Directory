@@ -1,18 +1,21 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
 export const medicineSchema = z.object({
     name: z.string({
         error: 'Name is required',
     }),
-    cost: z.number({
-        error: 'Cost is required',
+    purchasePrice: z.number({
+        error: 'Purchase price is required',
+    }),
+    sellingPrice: z.number({
+        error: 'Selling price is required',
     }),
     gst: z.number({
         error: 'GST is required',
     }),
-    discount: z.number({
-        error: 'Discount is required',
-    }),
+    stock: z.number().optional().default(0),
+    batchNumber: z.string().optional(),
+    manufactureDate: z.string().optional().nullable().transform((val) => val ? new Date(val) : undefined),
     brand: z
         .object({
             _id: z.string(),
