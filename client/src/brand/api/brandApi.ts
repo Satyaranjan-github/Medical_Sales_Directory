@@ -66,5 +66,6 @@ export const {
     useDeleteBrandPermanentlyMutation,
     useLazyGetAllBrandsQuery,
     useLazyGetBrandByIdQuery,
-    useLazyGetBrandSuggestionsQuery
+    useLazyGetBrandSuggestionsQuery,
+    useGetBrandSuggestionsQuery
 } = brandApi

@@ -13,6 +13,22 @@ export const medicineSchema = z.object({
     discount: z.number({
         error: 'Discount is required',
     }),
+    brand: z
+        .object({
+            _id: z.string(),
+            name: z.string(),
+        })
+        .refine((val) => val !== null, {
+            message: "Brand is required",
+        }),
+    category: z
+        .object({
+            _id: z.string(),
+            name: z.string(),
+        })
+        .refine((val) => val !== null, {
+            message: "Category is required",
+        }),
     expiry: z.string({
         error: 'Expiry date is required',
     }).transform((val) => new Date(val)),
