@@ -1,9 +1,12 @@
-import { apiSlice } from "../../apiSlice"
+import { apiSlice } from "../../apiSlice";
 
 export const categoryApi = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         getAllCategories: builder.query({
-            query: () => '/categories',
+            query: (params?: { page?: number; limit?: number }) => ({
+                url: '/categories',
+                params: params ? { page: params.page, limit: params.limit } : undefined,
+            }),
             providesTags: ['Category'],
         }),
         createCategory: builder.mutation({

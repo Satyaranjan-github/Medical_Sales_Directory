@@ -13,11 +13,27 @@ export const createBrandController = async (req: Request, res: Response) => {
 }
 
 export const getAllBrandsController = async (req: Request, res: Response) => {
-    const brands = await getAllBrands();
+    const pageStr = req.query.page as string | undefined;
+    const limitStr = req.query.limit as string | undefined;
+
+    const page = pageStr !== undefined ? Math.max(1, parseInt(pageStr, 10) || 1) : undefined;
+    const limit = limitStr !== undefined ? Math.max(1, parseInt(limitStr, 10) || 9) : undefined;
+
+    const result = await getAllBrands(page, limit);
 
     res.status(200).json({
         message: "Brands Fetched successfully",
-        data: brands,
+        data: result.brands,
+        pagination: {
+            total: result.total,
+            page: result.page,
+            limit: result.limit,
+            totalPages: result.totalPages
+        },
+        total: result.total,
+        page: result.page,
+        limit: result.limit,
+        totalPages: result.totalPages,
         success: true
     });
 }

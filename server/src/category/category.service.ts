@@ -5,8 +5,32 @@ export const createCategory = async (CategoryData: ICategory) => {
     return await Category.create(CategoryData);
 }
 
-export const getAllCategories = async () => {
-    return await Category.find();
+export const getAllCategories = async (page?: number, limit?: number) => {
+    if (page !== undefined && limit !== undefined) {
+        const skip = (page - 1) * limit;
+        const [categories, total] = await Promise.all([
+            Category.find().skip(skip).limit(limit),
+            Category.countDocuments()
+        ]);
+        const totalPages = Math.ceil(total / limit) || 1;
+        return {
+            categories,
+            total,
+            page,
+            limit,
+            totalPages
+        };
+    }
+
+    const categories = await Category.find();
+    const total = categories.length;
+    return {
+        categories,
+        total,
+        page: 1,
+        limit: total,
+        totalPages: 1
+    };
 }
 
 export const getCategoryById = async (id: string) => {

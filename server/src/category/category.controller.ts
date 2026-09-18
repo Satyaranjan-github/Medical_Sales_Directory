@@ -14,11 +14,27 @@ export const createCategoryController = async (req: Request, res: Response) => {
 }
 
 export const getAllCategorysController = async (req: Request, res: Response) => {
-    const categorys = await getAllCategories();
+    const pageStr = req.query.page as string | undefined;
+    const limitStr = req.query.limit as string | undefined;
+
+    const page = pageStr !== undefined ? Math.max(1, parseInt(pageStr, 10) || 1) : undefined;
+    const limit = limitStr !== undefined ? Math.max(1, parseInt(limitStr, 10) || 9) : undefined;
+
+    const result = await getAllCategories(page, limit);
 
     res.status(200).json({
         message: "Categorys Fetched successfully",
-        data: categorys,
+        data: result.categories,
+        pagination: {
+            total: result.total,
+            page: result.page,
+            limit: result.limit,
+            totalPages: result.totalPages
+        },
+        total: result.total,
+        page: result.page,
+        limit: result.limit,
+        totalPages: result.totalPages,
         success: true
     });
 }

@@ -10,8 +10,32 @@ export const createMedicine = async (medicineData: IMedicine) => {
     return await Medicine.create(medicineData);
 }
 
-export const getAllMedicines = async () => {
-    return await Medicine.find().populate(populatedFields);
+export const getAllMedicines = async (page?: number, limit?: number) => {
+    if (page !== undefined && limit !== undefined) {
+        const skip = (page - 1) * limit;
+        const [medicines, total] = await Promise.all([
+            Medicine.find().populate(populatedFields).skip(skip).limit(limit),
+            Medicine.countDocuments()
+        ]);
+        const totalPages = Math.ceil(total / limit) || 1;
+        return {
+            medicines,
+            total,
+            page,
+            limit,
+            totalPages
+        };
+    }
+
+    const medicines = await Medicine.find().populate(populatedFields);
+    const total = medicines.length;
+    return {
+        medicines,
+        total,
+        page: 1,
+        limit: total,
+        totalPages: 1
+    };
 }
 
 export const getMedicineById = async (id: string) => {

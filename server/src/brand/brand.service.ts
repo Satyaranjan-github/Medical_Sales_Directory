@@ -5,8 +5,32 @@ export const createBrand = async (brandData: IBrand) => {
     return await Brand.create(brandData);
 }
 
-export const getAllBrands = async () => {
-    return await Brand.find();
+export const getAllBrands = async (page?: number, limit?: number) => {
+    if (page !== undefined && limit !== undefined) {
+        const skip = (page - 1) * limit;
+        const [brands, total] = await Promise.all([
+            Brand.find().skip(skip).limit(limit),
+            Brand.countDocuments()
+        ]);
+        const totalPages = Math.ceil(total / limit) || 1;
+        return {
+            brands,
+            total,
+            page,
+            limit,
+            totalPages
+        };
+    }
+
+    const brands = await Brand.find();
+    const total = brands.length;
+    return {
+        brands,
+        total,
+        page: 1,
+        limit: total,
+        totalPages: 1
+    };
 }
 
 export const getBrandById = async (id: string) => {
