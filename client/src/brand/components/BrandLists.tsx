@@ -1,5 +1,6 @@
 import {
     CheckCircle2,
+    ChevronLeft,
     ChevronRight,
     Clock,
     Plus,
@@ -17,14 +18,35 @@ import { useNavigate } from "react-router-dom";
 import LoadingModal from "../../common/LoadingModal";
 
 const BrandLists = () => {
-    const { data: brandsRes, isLoading } = useGetAllBrandsQuery(undefined);
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(9);
+
+    const { data: brandsRes, isLoading } = useGetAllBrandsQuery({ page, limit });
     const [openModal, setOpenModal] = useState(false);
     const [openSearchModal, setOpenSearchModal] = useState(false);
 
-    const brands: IBrand[] = brandsRes?.data || [];
+    const brands: IBrand[] = brandsRes?.data || (Array.isArray(brandsRes) ? brandsRes : []);
+    const totalPages: number = brandsRes?.totalPages || brandsRes?.pagination?.totalPages || 1;
+    const totalBrands: number = brandsRes?.total || brandsRes?.pagination?.total || brands.length;
+
+    const startItem = totalBrands === 0 ? 0 : (page - 1) * limit + 1;
+    const endItem = Math.min(page * limit, totalBrands);
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= totalPages && newPage !== page) {
+            setPage(newPage);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+    };
+
+    const handleLimitChange = (newLimit: number) => {
+        setLimit(newLimit);
+        setPage(1);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    };
 
     return (
-        <div className="p-4 sm:p-8 space-y-6 bg-slate-50/50 dark:bg-slate-950 min-h-screen transition-colors duration-200">
+        <div className="p-4 sm:p-12 space-y-6 pb-28 bg-slate-50/50 dark:bg-slate-950 min-h-screen transition-colors duration-200">
             {/* PAGE HEADER */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xs">
                 <div>
@@ -65,7 +87,7 @@ const BrandLists = () => {
 
             {/* BRANDS GRID */}
             {!isLoading && brands.length > 0 && (
-                <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
                     {brands.map((brand: IBrand) => (
                         <BrandCard key={brand._id} brand={brand} />
                     ))}
@@ -82,6 +104,67 @@ const BrandLists = () => {
                     <p className="text-xs text-slate-400 max-w-sm mx-auto">
                         Start by registering your first pharmaceutical manufacturer or brand label.
                     </p>
+                </div>
+            )}
+
+            {/* FIXED BOTTOM PAGINATION CONTROLS (FLOATING GLASS BAR) */}
+            {!isLoading && totalBrands > 0 && (
+                <div className="fixed bottom-0 left-0 md:left-64 right-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800/80 shadow-lg shadow-slate-950/5 p-3 sm:px-6 sm:py-3.5 transition-colors duration-200">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-3 max-w-7xl mx-auto">
+                        {/* Left Section: Total & Limit Select */}
+                        <div className="flex items-center justify-between md:justify-start w-full md:w-auto gap-4 text-xs">
+                            <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 font-medium">
+                                <span>Showing</span>
+                                <span className="font-bold text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200/60 dark:border-slate-700/60">
+                                    {startItem}–{endItem}
+                                </span>
+                                <span>of</span>
+                                <span className="font-bold text-slate-900 dark:text-white">{totalBrands}</span>
+                                <span className="hidden sm:inline">brands</span>
+                            </div>
+
+                            <div className="h-4 w-px bg-slate-200 dark:bg-slate-800 hidden sm:block" />
+
+                            {/* Per Page Limit Dropdown */}
+                            <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
+                                <span className="hidden sm:inline font-medium">Per page:</span>
+                                <select
+                                    value={limit}
+                                    onChange={(e) => handleLimitChange(Number(e.target.value))}
+                                    className="bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 font-semibold text-xs focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none cursor-pointer"
+                                >
+                                    <option value={6}>6</option>
+                                    <option value={9}>9</option>
+                                    <option value={12}>12</option>
+                                    <option value={18}>18</option>
+                                    <option value={24}>24</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {/* Right Section: Pagination Controls */}
+                        <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+                            {/* Prev Page */}
+                            <button
+                                onClick={() => handlePageChange(page - 1)}
+                                disabled={page <= 1}
+                                title="Previous Page"
+                                className="p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/80 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+                            >
+                                <ChevronLeft size={16} />
+                            </button>
+
+                            {/* Next Page */}
+                            <button
+                                onClick={() => handlePageChange(page + 1)}
+                                disabled={page >= totalPages}
+                                title="Next Page"
+                                className="p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/80 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+                            >
+                                <ChevronRight size={16} />
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
 
@@ -102,9 +185,8 @@ export const BrandCard = ({ brand, onSelect }: { brand: IBrand; onSelect?: () =>
     return (
         <div
             onClick={handleCardClick}
-            className={`group relative p-5 rounded-2xl border transition-all duration-200 cursor-pointer bg-white dark:bg-slate-900 flex flex-col justify-between hover:shadow-md ${
-                brand.isDeleted ? "border-rose-200 dark:border-rose-900/40 bg-rose-50/40 dark:bg-rose-950/20" : "border-slate-200 dark:border-slate-800 hover:border-green-300 dark:hover:border-green-600"
-            }`}
+            className={`group relative p-5 rounded-2xl border transition-all duration-200 cursor-pointer bg-white dark:bg-slate-900 flex flex-col justify-between hover:shadow-md ${brand.isDeleted ? "border-rose-200 dark:border-rose-900/40 bg-rose-50/40 dark:bg-rose-950/20" : "border-slate-200 dark:border-slate-800 hover:border-green-300 dark:hover:border-green-600"
+                }`}
         >
             <div>
                 {/* Header */}

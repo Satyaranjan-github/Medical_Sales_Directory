@@ -3,8 +3,16 @@ import { z } from 'zod';
 export const medicineSchema = z.object({
     _id: z.string().optional(),
     name: z.string().min(1, "Medicine name is required"),
-    gst: z.union([z.literal(5), z.literal(12), z.literal(18), z.literal(28)]).optional().default(18),
-    stock: z.number().optional().default(0),
+    gst: z.preprocess(
+        (val) => (val === "" || val === undefined || val === null || Number.isNaN(val) ? undefined : Number(val)),
+        z.union([z.literal(5), z.literal(12), z.literal(18), z.literal(28)]).optional()
+    ),
+    stock: z
+        .preprocess(
+            (val) => (val === "" || val === undefined || val === null || Number.isNaN(val) ? 0 : Number(val)),
+            z.number().min(0, "Stock cannot be negative")
+        )
+        .default(0),
     batchNumber: z.string().optional(),
     manufactureDate: z.date().optional(),
     brand: z.object({

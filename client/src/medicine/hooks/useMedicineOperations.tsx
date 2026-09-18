@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import useLoading from "../../hooks/useLoading";
 import type { IMedicine } from "../../types/medicine";
-import { useCreateMedicineMutation, useDeleteMedicineMutation, useLazyGetMedicineByIdQuery, useRestoreMedicineMutation, useUpdateMedicineMutation } from "../api/medicineApi";
+import { useCreateMedicineMutation, useDeleteMedicineMutation, useDeleteMedicinePermanentlyMutation, useLazyGetMedicineByIdQuery, useRestoreMedicineMutation, useUpdateMedicineMutation } from "../api/medicineApi";
 import { clearSelectedMedicine, updateMedicineInList } from "../redux/medicineSlice";
 
 function useMedicineOperations() {
@@ -14,6 +14,7 @@ function useMedicineOperations() {
 
     const [updateMedicineMutation, { isLoading: isUpdatingMedicine }] = useUpdateMedicineMutation()
     const [deleteMedicineMutation, { isLoading: isDeletingMedicine }] = useDeleteMedicineMutation()
+    const [deleteMedicinePermanentlyMutation, { isLoading: isDeletingMedicinePermanently }] = useDeleteMedicinePermanentlyMutation()
     const [restoreMedicineMutation, { isLoading: isRestoringMedicine }] = useRestoreMedicineMutation()
     const [createMedicineMutation, { isLoading: isCreatingMedicine }] = useCreateMedicineMutation()
 
@@ -91,12 +92,27 @@ function useMedicineOperations() {
         }
     }
 
+    const deleteMedicinePermanently = async (id: string) => {
+        if (isDeletingMedicinePermanently) return false
+
+        const isLoadingModal = Loading({ message: "Deleting Medicine Permanently..." });
+
+        try {
+            await deleteMedicinePermanentlyMutation(id).unwrap()
+            isLoadingModal()
+            return true
+        } catch (error) {
+            console.log("Error in deleting MedicinePermanently", error)
+        }
+    }
+
     return {
         getMedicineById,
         createMedicine,
         deleteMedicine,
         restoreMedicine,
-        updateMedicine
+        updateMedicine,
+        deleteMedicinePermanently
     };
 }
 

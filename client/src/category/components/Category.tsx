@@ -22,7 +22,7 @@ const Category = () => {
     }
 
     return (
-        <div className="p-4 sm:p-6 space-y-5 max-w-5xl mx-auto bg-slate-50/50 dark:bg-slate-950 min-h-screen transition-colors duration-200">
+        <div className="p-4 sm:p-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen transition-colors duration-200">
             <BasicInformation categoryData={category.data} />
             <AdditionalInformation categoryData={category.data} />
             <CategoryActionButtons categoryData={category.data} />

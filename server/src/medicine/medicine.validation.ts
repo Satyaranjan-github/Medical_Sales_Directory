@@ -10,9 +10,7 @@ export const medicineSchema = z.object({
     sellingPrice: z.number({
         error: 'Selling price is required',
     }),
-    gst: z.number({
-        error: 'GST is required',
-    }),
+    gst: z.number().min(0, "GST cannot be negative").optional().default(18),
     stock: z.number().optional().default(0),
     batchNumber: z.string().optional(),
     manufactureDate: z.string().optional().nullable().transform((val) => val ? new Date(val) : undefined),

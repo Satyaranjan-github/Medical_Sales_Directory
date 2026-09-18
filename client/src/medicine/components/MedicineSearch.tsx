@@ -145,13 +145,7 @@ const MedicineSearch = ({
                                                     <h4 className="text-xs font-extrabold text-slate-900 group-hover:text-green-700 transition-colors truncate">
                                                         {medicine.name}
                                                     </h4>
-                                                    <span className="px-2 py-0.5 rounded-full bg-emerald-100/80 text-emerald-800 text-[10px] font-extrabold">
-                                                        ₹{medicine.sellingPrice}
-                                                    </span>
                                                 </div>
-                                                <p className="text-[11px] text-slate-400 truncate mt-0.5">
-                                                    {medicine.batchNumber ? `Batch: ${medicine.batchNumber}` : "No batch number"}
-                                                </p>
                                             </div>
                                         </div>
 

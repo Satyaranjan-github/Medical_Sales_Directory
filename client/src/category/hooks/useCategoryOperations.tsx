@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import type { ICategory } from "../../types/category";
-import { useCreateCategoryMutation, useDeleteCategoryMutation, useLazyGetCategoryByIdQuery, useRestoreCategoryMutation, useUpdateCategoryMutation } from "../api/categoryApi";
+import { useCreateCategoryMutation, useDeleteCategoryMutation, useDeleteCategoryPermanentlyMutation, useLazyGetCategoryByIdQuery, useRestoreCategoryMutation, useUpdateCategoryMutation } from "../api/categoryApi";
 import { clearSelectedCategory, updateCategoryInList } from "../redux/categorySlice";
 
 function useCategoryOperations() {
@@ -12,6 +12,7 @@ function useCategoryOperations() {
 
     const [updateCategoryMutation, { isLoading: isUpdatingCategory }] = useUpdateCategoryMutation()
     const [deleteCategoryMutation, { isLoading: isDeletingCategory }] = useDeleteCategoryMutation()
+    const [deleteCategoryPermanentlyMutation, { isLoading: isDeletingCategoryPermanently }] = useDeleteCategoryPermanentlyMutation()
     const [restoreCategoryMutation, { isLoading: isRestoringCategory }] = useRestoreCategoryMutation()
     const [createCategoryMutation, { isLoading: isCreatingCategory }] = useCreateCategoryMutation()
 
@@ -65,6 +66,17 @@ function useCategoryOperations() {
         }
     }
 
+    const deleteCategoryPermanently = async (id: string) => {
+        if (isDeletingCategoryPermanently) return false
+
+        try {
+            await deleteCategoryPermanentlyMutation(id).unwrap()
+            return true
+        } catch (error) {
+            console.log("Error in deleting CategoryPermanently", error)
+        }
+    }
+
     const restoreCategory = async (id: string) => {
         if (isRestoringCategory) return false
 
@@ -81,7 +93,8 @@ function useCategoryOperations() {
         createCategory,
         deleteCategory,
         restoreCategory,
-        updateCategory
+        updateCategory,
+        deleteCategoryPermanently
     };
 }
 

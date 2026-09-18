@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import type { IBrand } from "../../types/brand";
-import { useCreateBrandMutation, useDeleteBrandMutation, useLazyGetBrandByIdQuery, useRestoreBrandMutation, useUpdateBrandMutation } from "../api/brandApi";
+import { useCreateBrandMutation, useDeleteBrandMutation, useDeleteBrandPermanentlyMutation, useLazyGetBrandByIdQuery, useRestoreBrandMutation, useUpdateBrandMutation } from "../api/brandApi";
 import { clearSelectedBrand, updateBrandInList } from "../redux/brandSlice";
 
 function useBrandOperations() {
@@ -12,6 +12,7 @@ function useBrandOperations() {
 
     const [updateBrandMutation, { isLoading: isUpdatingBrand }] = useUpdateBrandMutation()
     const [deleteBrandMutation, { isLoading: isDeletingBrand }] = useDeleteBrandMutation()
+    const [deleteBrandPermanentlyMutation, { isLoading: isDeletingBrandPermanently }] = useDeleteBrandPermanentlyMutation()
     const [restoreBrandMutation, { isLoading: isRestoringBrand }] = useRestoreBrandMutation()
     const [createBrandMutation, { isLoading: isCreatingBrand }] = useCreateBrandMutation()
 
@@ -65,6 +66,17 @@ function useBrandOperations() {
         }
     }
 
+    const deleteBrandPermanently = async (id: string) => {
+        if (isDeletingBrandPermanently) return false
+
+        try {
+            await deleteBrandPermanentlyMutation(id).unwrap()
+            return true
+        } catch (error) {
+            console.log("Error in deleting Brand Permanently", error)
+        }
+    }
+
     const restoreBrand = async (id: string) => {
         if (isRestoringBrand) return false
 
@@ -81,7 +93,8 @@ function useBrandOperations() {
         createBrand,
         deleteBrand,
         restoreBrand,
-        updateBrand
+        updateBrand,
+        deleteBrandPermanently
     };
 }
 

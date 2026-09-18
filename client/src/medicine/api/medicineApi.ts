@@ -6,7 +6,10 @@ import { apiSlice } from '../../apiSlice';
 export const medicineApi = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         getAllMedicines: builder.query({
-            query: () => '/medicines',
+            query: (params?: { page?: number; limit?: number }) => ({
+                url: '/medicines',
+                params: params ? { page: params.page, limit: params.limit } : undefined,
+            }),
             providesTags: ['Medicine'],
         }),
         createMedicine: builder.mutation({

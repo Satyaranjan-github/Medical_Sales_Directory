@@ -9,7 +9,7 @@ export interface IMedicine {
     batchNumber?: string;
     purchasePrice: number;
     sellingPrice: number;
-    gst: 5 | 12 | 18 | 28;
+    gst: 5 | 12 | 18 | 28 | undefined;
     stock?: number;
     manufactureDate?: Date;
     expiry: Date;

@@ -1,3 +1,4 @@
+import { Check, ChevronDown, Layers, Loader2, SearchX, X } from "lucide-react";
 import { useRef, useState } from "react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
@@ -9,7 +10,6 @@ import Select, {
     type NoticeProps,
     type OptionProps
 } from "react-select";
-import { Check, ChevronDown, Layers, Loader2, SearchX, X } from "lucide-react";
 import type { ICategory } from "../../types/category";
 import { useGetAllCategoriesQuery, useLazyGetCategorySuggestionsQuery } from "../api/categoryApi";
 

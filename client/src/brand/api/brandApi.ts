@@ -3,7 +3,10 @@ import { apiSlice } from "../../apiSlice";
 export const brandApi = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         getAllBrands: builder.query({
-            query: () => '/brands',
+            query: (params?: { page?: number; limit?: number }) => ({
+                url: '/brands',
+                params: params ? { page: params.page, limit: params.limit } : undefined,
+            }),
             providesTags: ['Brand'],
         }),
         createBrand: builder.mutation({
