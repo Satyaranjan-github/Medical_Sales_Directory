@@ -10,13 +10,15 @@ import {
     Percent,
     Tag,
     Layers,
-    Boxes
+    Boxes,
+    ShoppingBag
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import type { IBrand } from "../../types/brand";
 import type { ICategory } from "../../types/category";
 import type { IMedicine } from "../../types/medicine";
 import { useGetMedicineByIdQuery } from "../api/medicineApi";
+import { useGetSalesByMedicineQuery } from "../../sale/api/saleApi";
 import MedicineActionButton from "./MedicineActionButton";
 
 const Medicine = () => {
@@ -38,9 +40,88 @@ const Medicine = () => {
     return (
         <div className="p-4 sm:p-6 space-y-5 bg-slate-50/50 dark:bg-slate-950 min-h-screen transition-colors duration-200">
             <BasicInformation medicineData={medicine.data} />
+            <SalesHistoryForMedicine medicineId={medicineId as string} />
             <AdditionalInformation medicineData={medicine.data} />
             <MedicineActionButton medicineData={medicine.data} />
         </div>
+    );
+};
+
+const SalesHistoryForMedicine = ({ medicineId }: { medicineId: string }) => {
+    const { data: salesRes, isLoading } = useGetSalesByMedicineQuery({ medicineId });
+    const sales = salesRes?.data || [];
+
+    return (
+        <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 shadow-xs space-y-4">
+            <div className="flex gap-2.5 items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 font-extrabold">
+                <div className="flex items-center gap-2.5">
+                    <div className="p-2 rounded-xl bg-green-50 dark:bg-green-950/50 text-green-600 dark:text-green-400">
+                        <ShoppingBag size={22} />
+                    </div>
+                    <h3 className="text-lg font-black leading-tight text-slate-900 dark:text-white">
+                        Sales History for this Medicine
+                    </h3>
+                </div>
+                <span className="text-xs font-bold text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/60 px-3 py-1 rounded-full border border-green-200/50 dark:border-green-800/50">
+                    {sales.length} Sales Transactions
+                </span>
+            </div>
+
+            {isLoading ? (
+                <p className="text-xs text-slate-400">Loading sales records for this medicine...</p>
+            ) : sales.length === 0 ? (
+                <p className="text-xs text-slate-400">No sales recorded for this medicine yet.</p>
+            ) : (
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr className="bg-slate-50 dark:bg-slate-800/50 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 dark:border-slate-800">
+                                <th className="py-2.5 px-4">Receipt ID</th>
+                                <th className="py-2.5 px-4">Customer</th>
+                                <th className="py-2.5 px-4">Qty Sold</th>
+                                <th className="py-2.5 px-4">Unit Price</th>
+                                <th className="py-2.5 px-4">Mode</th>
+                                <th className="py-2.5 px-4 text-right">Total Bill</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-semibold text-slate-700 dark:text-slate-300">
+                            {sales.map((sale) => {
+                                const medicineItem = sale.medicines?.find((m) => {
+                                    const medId = typeof m.medicine === "object" ? (m.medicine as IMedicine)?._id : m.medicine;
+                                    return medId === medicineId;
+                                });
+
+                                return (
+                                    <tr key={sale._id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/60">
+                                        <td className="py-3 px-4 font-black text-slate-900 dark:text-white">
+                                            #{sale._id?.slice(-8).toUpperCase()}
+                                        </td>
+                                        <td className="py-3 px-4">
+                                            <strong className="block text-slate-800 dark:text-slate-200">{sale.customerName}</strong>
+                                            <span className="text-[10px] text-slate-400">{sale.customerPhone}</span>
+                                        </td>
+                                        <td className="py-3 px-4 font-bold text-green-600 dark:text-green-400">
+                                            {medicineItem?.quantity || 1} units
+                                        </td>
+                                        <td className="py-3 px-4 text-slate-500">
+                                            ₹{medicineItem?.unitPrice || 0}
+                                        </td>
+                                        <td className="py-3 px-4">
+                                            <span className="text-[10px] font-bold bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 rounded-md">
+                                                {sale.paymentMode}
+                                            </span>
+                                        </td>
+                                        <td className="py-3 px-4 text-right font-black text-slate-900 dark:text-white">
+                                            ₹{sale.totalAmount?.toLocaleString()}
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+        </section>
     );
 };
 

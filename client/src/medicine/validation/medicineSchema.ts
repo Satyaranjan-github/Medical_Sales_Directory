@@ -31,7 +31,7 @@ export const medicineSchema = z.object({
         .number({ message: "Selling price is required" })
         .min(0, "Selling price must be positive"),
 
-    expiry: z
+    expiry: z.coerce
         .date({ message: "Expiry date is required" })
         .refine((d) => d instanceof Date && !isNaN(d.getTime()), {
             message: "Valid expiry date is required",

@@ -6,6 +6,7 @@ import morgan from "morgan"
 import brandRoutes from "../src/brand/brand.route"
 import categoryRoutes from '../src/category/category.route'
 import medicineRoutes from '../src/medicine/medicine.route'
+import saleRoutes from '../src/sale/sale.route'
 
 dotenv.config()
 
@@ -25,6 +26,7 @@ app.use(cors({
 app.use("/api/medicines", medicineRoutes)
 app.use("/api/brands", brandRoutes)
 app.use("/api/categories", categoryRoutes)
+app.use("/api/sales", saleRoutes)
 
 app.get('/', (req, res) => {
     res.send('Hello World!')

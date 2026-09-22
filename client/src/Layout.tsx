@@ -18,6 +18,8 @@ import Dashboard from "./common/Dashboard";
 import Navbar from "./common/Navbar";
 import Medicine from "./medicine/components/Medicine";
 import MedicineLists from "./medicine/components/MedicineLists";
+import Sale from "./sale/components/Sale";
+import SaleLists from "./sale/components/SaleLists";
 import Settings from "./settings/Settings";
 import { ThemeProvider } from "./context/ThemeContext";
 
@@ -165,7 +167,8 @@ export const Layout = () => {
                             <Route path="/brands/:id" element={<Brand />} />
                             <Route path="/categories" element={<CategoryLists />} />
                             <Route path="/categories/:id" element={<Category />} />
-                            <Route path="/sales" element={<Dashboard />} />
+                            <Route path="/sales" element={<SaleLists />} />
+                            <Route path="/sales/:id" element={<Sale />} />
                             <Route path="/settings" element={<Settings />} />
                         </Routes>
                     </main>

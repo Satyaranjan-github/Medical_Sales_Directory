@@ -1,5 +1,5 @@
-import type { Types } from "mongoose"
-import type { IMedicine } from "./medicine"
+import type { Document, Types } from "mongoose";
+import type { IMedicine } from "./medicine";
 
 export enum PaymentMode {
     CASH = "CASH",
@@ -17,26 +17,25 @@ export enum PaymentStatus {
 }
 
 export interface SaleMedicine {
-    medicine: Types.ObjectId | IMedicine
-    quantity: number
-    unitPrice: number
-    totalPrice: number
+    medicine: Types.ObjectId | IMedicine;
+    quantity: number;
+    unitPrice: number;
+    totalPrice: number;
 }
 
 export interface ISale extends Document {
-    customerName: string
-    customerPhone: string
+    customerName: string;
+    customerPhone: string;
     saleDate: Date;
-    medicines: SaleMedicine[]
-    subTotal: number
-    discount: number
-    totalAmount: number
-    paymentMode: PaymentMode
-    paymentStatus: PaymentStatus
-    notes: string
-    createdAt?: Date
-    updatedAt?: Date
-    isDeleted: boolean
-    ,
-    deletedAt?: Date
+    medicines: SaleMedicine[];
+    subTotal: number;
+    discount: number;
+    totalAmount: number;
+    paymentMode: PaymentMode;
+    paymentStatus: PaymentStatus;
+    notes?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+    isDeleted: boolean;
+    deletedAt?: Date;
 }

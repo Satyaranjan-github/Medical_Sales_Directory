@@ -4,6 +4,7 @@ import {
     brandSuggestionsController,
     createBrandController,
     deleteBrandController,
+    deleteBrandPermanentlyController,
     getAllBrandsController,
     getBrandByIdController,
     restoreBrandController,
@@ -21,6 +22,6 @@ router
     .patch("/:id/update", validateMiddleware(brandSchema), updateBrandController)
     .patch("/:id/delete", deleteBrandController)
     .patch("/:id/restore", restoreBrandController)
-    .delete("/:id/permanently", deleteBrandController)
+    .delete("/:id/permanently", deleteBrandPermanentlyController)
 
 export default router
