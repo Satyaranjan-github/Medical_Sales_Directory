@@ -3,8 +3,10 @@ import { useDispatch } from "react-redux";
 import type { IBrand } from "../../types/brand";
 import { useCreateBrandMutation, useDeleteBrandMutation, useDeleteBrandPermanentlyMutation, useLazyGetBrandByIdQuery, useRestoreBrandMutation, useUpdateBrandMutation } from "../api/brandApi";
 import { clearSelectedBrand, updateBrandInList } from "../redux/brandSlice";
+import { useNavigate } from "react-router-dom";
 
 function useBrandOperations() {
+    const navigate = useNavigate()
     const dispatch = useDispatch()
     const [triggerFetchById, {
         isLoading: isLoadingSingle
@@ -71,6 +73,7 @@ function useBrandOperations() {
 
         try {
             await deleteBrandPermanentlyMutation(id).unwrap()
+            navigate(-1)
             return true
         } catch (error) {
             console.log("Error in deleting Brand Permanently", error)

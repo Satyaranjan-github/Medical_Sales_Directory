@@ -12,7 +12,7 @@ import {
     X
 } from "lucide-react";
 import { useEffect, type Dispatch, type SetStateAction } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import BrandSelect from "../../brand/components/BrandSelect";
 import CategorySelect from "../../category/components/CategorySelect";
 import type { IMedicine } from "../../types/medicine";
@@ -41,6 +41,7 @@ const MedicineFormModal = ({
         mode: "onChange",
         defaultValues: {
             ...medicineData,
+            expiry: medicineData?.expiry ? new Date(medicineData.expiry).toISOString().split("T")[0] : "",
         }
     });
 
@@ -63,6 +64,7 @@ const MedicineFormModal = ({
     const onSubmit = async (data: any) => {
         const payload = {
             ...data,
+            expiry: data.expiry ? new Date(data.expiry) : undefined,
             gst: data.gst ? Number(data.gst) : undefined
         };
         if (isUpdate) {
@@ -77,7 +79,7 @@ const MedicineFormModal = ({
         if (!medicineData) return;
         reset({
             ...medicineData,
-            expiry: medicineData.expiry ? new Date(medicineData.expiry) : new Date()
+            expiry: medicineData.expiry ? new Date(medicineData.expiry).toISOString().split("T")[0] : ""
         });
     }, [medicineData, reset]);
 
@@ -151,16 +153,28 @@ const MedicineFormModal = ({
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5" htmlFor="brand">
-                                        Brand
+                                        Brand <span className="text-rose-500">*</span>
                                     </label>
                                     <BrandSelect name="brand" control={control} />
+                                    {errors.brand && (
+                                        <p className="flex items-center gap-1 text-[11px] text-rose-500 mt-1 font-bold">
+                                            <AlertCircle size={12} />
+                                            {(errors.brand.message || (errors.brand as any)._id?.message || "Brand is required") as string}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div>
                                     <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5" htmlFor="category">
-                                        Category
+                                        Category <span className="text-rose-500">*</span>
                                     </label>
                                     <CategorySelect name="category" control={control} />
+                                    {errors.category && (
+                                        <p className="flex items-center gap-1 text-[11px] text-rose-500 mt-1 font-bold">
+                                            <AlertCircle size={12} />
+                                            {(errors.category.message || (errors.category as any)._id?.message || "Category is required") as string}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -293,24 +307,26 @@ const MedicineFormModal = ({
                                 {/* Expiry Date */}
                                 <div>
                                     <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5" htmlFor="expiry">
-                                        Expiry Date
+                                        Expiry Date <span className="text-rose-500">*</span>
                                     </label>
                                     <div className="relative">
                                         <Calendar size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 z-10 pointer-events-none" />
-                                        <Controller
-                                            name="expiry"
-                                            control={control}
-                                            render={({ field }) => (
-                                                <input
-                                                    id="expiry"
-                                                    type="date"
-                                                    value={field.value ? new Date(field.value).toISOString().split("T")[0] : ""}
-                                                    onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value) : undefined)}
-                                                    className="w-full text-sm font-semibold pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none focus:border-emerald-500 cursor-pointer"
-                                                />
-                                            )}
+                                        <input
+                                            id="expiry"
+                                            type="date"
+                                            {...register("expiry")}
+                                            className={`w-full text-sm font-semibold pl-9 pr-3 py-2.5 rounded-xl border outline-none transition-all cursor-pointer ${errors.expiry
+                                                ? "border-rose-400 bg-rose-50/20 text-rose-900 dark:text-rose-200 focus:border-rose-500"
+                                                : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:border-emerald-500"
+                                                }`}
                                         />
                                     </div>
+                                    {errors.expiry && (
+                                        <p className="flex items-center gap-1 text-[11px] text-rose-500 mt-1 font-bold">
+                                            <AlertCircle size={12} />
+                                            {errors.expiry.message as string}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         </div>

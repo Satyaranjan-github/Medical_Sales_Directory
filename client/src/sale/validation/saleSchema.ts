@@ -1,5 +1,5 @@
 import z from "zod";
-import { PaymentMode, PaymentStatus } from "../types/sale";
+import { PaymentMode, PaymentStatus } from "../../types/sale";
 
 export const saleMedicineInputSchema = z.object({
     medicine: z.string({ message: "Medicine ID is required" }),
