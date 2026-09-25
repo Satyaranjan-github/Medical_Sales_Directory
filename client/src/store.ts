@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { apiSlice } from "./apiSlice.ts";
 import medicineReducer from "./medicine/redux/medicineSlice.ts";
+import marginReducer from "./margin/redux/marginSlice.ts";
 
 export const store = configureStore({
     reducer: {
         medicine: medicineReducer,
+        margin: marginReducer,
 
         [apiSlice.reducerPath]: apiSlice.reducer,
     },

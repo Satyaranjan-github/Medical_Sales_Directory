@@ -9,14 +9,14 @@ import type { Dispatch, SetStateAction } from "react";
 import type { IBrand } from "../types/brand";
 import type { ICategory } from "../types/category";
 import type { IMedicine } from "../types/medicine";
-import type { ISaleRecord } from "./SaleFormModal";
+import type { ISale } from "../types/sale";
 
 interface ReportsModalProps {
     setOpenModal: Dispatch<SetStateAction<boolean>>;
     medicines: IMedicine[];
     brands: IBrand[];
     categories: ICategory[];
-    sales: ISaleRecord[];
+    sales: ISale[];
 }
 
 const ReportsModal = ({

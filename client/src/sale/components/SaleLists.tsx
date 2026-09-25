@@ -3,42 +3,29 @@ import {
     ChevronLeft,
     ChevronRight,
     CreditCard,
-    Filter,
     Pill,
     Plus,
-    Printer,
-    RefreshCw,
-    Search,
     ShoppingBag,
-    Trash2,
-    User,
-    X
+    User
 } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { IMedicine } from "../../types/medicine";
 import type { ISale } from "../../types/sale";
 import { useGetAllSalesQuery } from "../api/saleApi";
-import useSaleOperations from "../hooks/useSaleOperations";
 import SaleModal from "./SaleModal";
 import SaleReceiptModal from "./SaleReceiptModal";
 import LoadingModal from "../../common/LoadingModal";
+import type { IMedicine } from "../../types/medicine";
 
 const SaleLists = () => {
     const navigate = useNavigate();
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(9);
 
-    const { data: salesRes, isLoading, refetch } = useGetAllSalesQuery({ page, limit });
-    const { deleteSale, restoreSale, deleteSalePermanently } = useSaleOperations();
+    const { data: salesRes, isLoading } = useGetAllSalesQuery({ page, limit });
 
     const [openSaleModal, setOpenSaleModal] = useState(false);
     const [selectedSaleForReceipt, setSelectedSaleForReceipt] = useState<ISale | null>(null);
-
-    const [searchQuery, setSearchQuery] = useState("");
-    const [paymentModeFilter, setPaymentModeFilter] = useState("ALL");
-    const [paymentStatusFilter, setPaymentStatusFilter] = useState("ALL");
-    const [showFilters, setShowFilters] = useState(false);
 
     const rawSales: ISale[] = salesRes?.data || [];
     const totalPages: number = salesRes?.totalPages || 1;
@@ -46,24 +33,6 @@ const SaleLists = () => {
 
     const startItem = totalSales === 0 ? 0 : (page - 1) * limit + 1;
     const endItem = Math.min(page * limit, totalSales);
-
-    // Client-side filtering for search & status triggers
-    const filteredSales = rawSales.filter((sale) => {
-        const matchesSearch =
-            !searchQuery ||
-            sale.customerName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            sale.customerPhone?.includes(searchQuery) ||
-            sale._id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            sale.medicines?.some((m) => {
-                const medName = typeof m.medicine === "object" ? (m.medicine as IMedicine).name : "";
-                return medName.toLowerCase().includes(searchQuery.toLowerCase());
-            });
-
-        const matchesMode = paymentModeFilter === "ALL" || sale.paymentMode === paymentModeFilter;
-        const matchesStatus = paymentStatusFilter === "ALL" || sale.paymentStatus === paymentStatusFilter;
-
-        return matchesSearch && matchesMode && matchesStatus;
-    });
 
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages && newPage !== page) {
@@ -76,28 +45,6 @@ const SaleLists = () => {
         setLimit(newLimit);
         setPage(1);
         window.scrollTo({ top: 0, behavior: "smooth" });
-    };
-
-    const handleDelete = async (id?: string) => {
-        if (!id) return;
-        if (window.confirm("Are you sure you want to soft delete this sale record? Inventory stock will be replenished.")) {
-            await deleteSale(id);
-            refetch();
-        }
-    };
-
-    const handleRestore = async (id?: string) => {
-        if (!id) return;
-        await restoreSale(id);
-        refetch();
-    };
-
-    const handlePermanentDelete = async (id?: string) => {
-        if (!id) return;
-        if (window.confirm("CRITICAL WARNING: Permanently delete this sale record? This action cannot be undone.")) {
-            await deleteSalePermanently(id);
-            refetch();
-        }
     };
 
     return (
@@ -127,120 +74,27 @@ const SaleLists = () => {
                         <Plus size={18} />
                         Record New Sale
                     </button>
-
-                    <button
-                        type="button"
-                        onClick={() => setShowFilters(!showFilters)}
-                        className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 font-semibold text-sm shadow-xs transition-all cursor-pointer ${showFilters || searchQuery || paymentModeFilter !== "ALL" || paymentStatusFilter !== "ALL"
-                            ? "bg-green-50 dark:bg-green-950/50 text-green-700 dark:text-green-300 border-green-300 dark:border-green-700"
-                            : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
-                            }`}
-                    >
-                        <Filter size={18} />
-                        {showFilters ? "Hide Filters" : "Filter Sales"}
-                    </button>
-
-                    <button
-                        type="button"
-                        onClick={() => refetch()}
-                        className="p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all cursor-pointer"
-                        title="Refresh Sales"
-                    >
-                        <RefreshCw size={18} />
-                    </button>
                 </div>
             </div>
-
-            {/* SEARCH & FILTER BAR */}
-            {showFilters && (
-                <div className="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col sm:flex-row gap-3 items-center animate-in fade-in duration-150">
-                    {/* Search Input */}
-                    <div className="relative flex-1 w-full">
-                        <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-                        <input
-                            type="text"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Search by customer name, phone, receipt # or medicine..."
-                            className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-100 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all"
-                        />
-                        {searchQuery && (
-                            <button
-                                type="button"
-                                onClick={() => setSearchQuery("")}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-                            >
-                                <X size={14} />
-                            </button>
-                        )}
-                    </div>
-
-                    {/* Payment Mode Filter */}
-                    <div className="flex items-center gap-2 w-full sm:w-auto">
-                        <span className="text-xs font-bold text-slate-400 shrink-0">Mode:</span>
-                        <select
-                            value={paymentModeFilter}
-                            onChange={(e) => setPaymentModeFilter(e.target.value)}
-                            className="w-full sm:w-auto bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 font-bold text-xs outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 cursor-pointer"
-                        >
-                            <option value="ALL">All Modes</option>
-                            <option value="CASH">CASH</option>
-                            <option value="UPI">UPI</option>
-                            <option value="CARD">CARD</option>
-                            <option value="NET_BANKING">NET BANKING</option>
-                        </select>
-                    </div>
-
-                    {/* Payment Status Filter */}
-                    <div className="flex items-center gap-2 w-full sm:w-auto">
-                        <span className="text-xs font-bold text-slate-400 shrink-0">Status:</span>
-                        <select
-                            value={paymentStatusFilter}
-                            onChange={(e) => setPaymentStatusFilter(e.target.value)}
-                            className="w-full sm:w-auto bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 font-bold text-xs outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 cursor-pointer"
-                        >
-                            <option value="ALL">All Status</option>
-                            <option value="PAID">PAID</option>
-                            <option value="PENDING">PENDING</option>
-                        </select>
-                    </div>
-                </div>
-            )}
 
             {/* LOADING STATE */}
             {isLoading && <LoadingModal />}
 
             {/* SALES GRID */}
-            {!isLoading && filteredSales.length > 0 && (
+            {!isLoading && rawSales.length > 0 && (
                 <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
-                    {filteredSales.map((sale) => (
+                    {rawSales.map((sale) => (
                         <SaleCard
                             key={sale._id}
                             sale={sale}
                             onSelect={() => navigate(`/sales/${sale._id}`)}
-                            onReceipt={(e) => {
-                                e.stopPropagation();
-                                setSelectedSaleForReceipt(sale);
-                            }}
-                            onDelete={(e) => {
-                                e.stopPropagation();
-                                handleDelete(sale._id);
-                            }}
-                            onRestore={(e) => {
-                                e.stopPropagation();
-                                handleRestore(sale._id);
-                            }}
-                            onPermanentDelete={(e) => {
-                                e.stopPropagation();
-                                handlePermanentDelete(sale._id);
-                            }}
                         />
                     ))}
                 </div>
             )}
 
             {/* EMPTY STATE */}
-            {!isLoading && filteredSales.length === 0 && (
+            {!isLoading && rawSales.length === 0 && (
                 <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-3">
                     <div className="w-14 h-14 bg-slate-50 dark:bg-slate-800 text-slate-400 rounded-2xl flex items-center justify-center mx-auto">
                         <ShoppingBag size={28} />
@@ -337,18 +191,10 @@ export default SaleLists;
 // Individual Sale Card Component (matching MedicineCard design)
 const SaleCard = ({
     sale,
-    onSelect,
-    onReceipt,
-    onDelete,
-    onRestore,
-    onPermanentDelete
+    onSelect
 }: {
     sale: ISale;
     onSelect: () => void;
-    onReceipt: (e: React.MouseEvent) => void;
-    onDelete: (e: React.MouseEvent) => void;
-    onRestore: (e: React.MouseEvent) => void;
-    onPermanentDelete: (e: React.MouseEvent) => void;
 }) => {
     const formattedDate = sale.saleDate
         ? new Date(sale.saleDate).toLocaleDateString("en-IN", {
@@ -441,46 +287,6 @@ const SaleCard = ({
 
             {/* Footer Quick Action Bar */}
             <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
-                <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-                    <button
-                        type="button"
-                        onClick={onReceipt}
-                        className="p-1.5 rounded-lg text-slate-500 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-950/50 transition-colors cursor-pointer"
-                        title="Print / View Invoice Receipt"
-                    >
-                        <Printer size={15} />
-                    </button>
-
-                    {!sale.isDeleted ? (
-                        <button
-                            type="button"
-                            onClick={onDelete}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition-colors cursor-pointer"
-                            title="Soft Delete Sale"
-                        >
-                            <Trash2 size={15} />
-                        </button>
-                    ) : (
-                        <>
-                            <button
-                                type="button"
-                                onClick={onRestore}
-                                className="p-1.5 rounded-lg text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/50 transition-colors cursor-pointer"
-                                title="Restore Sale"
-                            >
-                                <RefreshCw size={15} />
-                            </button>
-                            <button
-                                type="button"
-                                onClick={onPermanentDelete}
-                                className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-100 dark:hover:bg-rose-900/60 transition-colors cursor-pointer"
-                                title="Delete Permanently"
-                            >
-                                <Trash2 size={15} />
-                            </button>
-                        </>
-                    )}
-                </div>
 
                 <div className="flex items-center gap-1 font-bold text-green-600 dark:text-green-400">
                     <span>View Details</span>

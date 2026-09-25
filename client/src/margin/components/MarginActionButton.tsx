@@ -1,0 +1,78 @@
+import { Edit, RotateCcw, Trash2 } from "lucide-react";
+import { useState } from "react";
+import type { IMargin } from "../../types/margin";
+import useMarginOperations from "../hooks/useMarginOperations";
+import MarginFormModal from "./MarginFormModal";
+
+interface MarginActionButtonProps {
+    marginData: IMargin;
+}
+
+const MarginActionButton = ({ marginData }: MarginActionButtonProps) => {
+    const [openModal, setOpenModal] = useState(false);
+    const { deleteMargin, restoreMargin, deleteMarginPermanently } = useMarginOperations();
+
+    const isDeleted = marginData.isDeleted;
+
+    return (
+        <>
+            <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 shadow-xs">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">Margin Operations</h4>
+                        <p className="text-xs text-slate-400">Modify margin configuration or archive/restore margin tier.</p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-3">
+                        {/* DELETE / RESTORE BUTTONS */}
+                        {isDeleted ? (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={() => deleteMarginPermanently(marginData._id as string)}
+                                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md transition-colors cursor-pointer"
+                                >
+                                    <Trash2 size={16} />
+                                    Delete Margin Permanently
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => restoreMargin(marginData._id as string)}
+                                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold text-xs shadow-md transition-colors cursor-pointer"
+                                >
+                                    <RotateCcw size={16} />
+                                    Restore Margin
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                {/* UPDATE BUTTON */}
+                                <button
+                                    type="button"
+                                    onClick={() => setOpenModal(true)}
+                                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs transition-colors cursor-pointer"
+                                >
+                                    <Edit size={16} className="text-slate-500 dark:text-slate-400" />
+                                    Update Margin
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => deleteMargin(marginData._id as string)}
+                                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 font-bold text-xs border border-rose-200/60 dark:border-rose-900/60 transition-colors cursor-pointer"
+                                >
+                                    <Trash2 size={16} />
+                                    Delete Margin
+                                </button>
+                            </>
+                        )}
+                    </div>
+                </div>
+            </section>
+
+            {/* UPDATE MODAL */}
+            {openModal && <MarginFormModal setOpenModal={setOpenModal} marginData={marginData} />}
+        </>
+    );
+};
+
+export default MarginActionButton;
