@@ -1,6 +1,7 @@
 import {
     Layers,
     LayoutDashboard,
+    Percent,
     Pill,
     Settings as SettingsIcon,
     ShoppingBag,
@@ -18,6 +19,8 @@ import Dashboard from "./common/Dashboard";
 import Navbar from "./common/Navbar";
 import Medicine from "./medicine/components/Medicine";
 import MedicineLists from "./medicine/components/MedicineLists";
+import Margin from "./margin/components/Margin";
+import MarginLists from "./margin/components/MarginLists";
 import Sale from "./sale/components/Sale";
 import SaleLists from "./sale/components/SaleLists";
 import Settings from "./settings/Settings";
@@ -87,6 +90,7 @@ export const Layout = () => {
                                 <SidebarLink to="/medicines" label="Medicines" Icon={Pill} onClick={closeMobileMenu} />
                                 <SidebarLink to="/brands" label="Brands" Icon={Tag} onClick={closeMobileMenu} />
                                 <SidebarLink to="/categories" label="Categories" Icon={Layers} onClick={closeMobileMenu} />
+                                <SidebarLink to="/margins" label="Margins" Icon={Percent} onClick={closeMobileMenu} />
                             </div>
                         </div>
 
@@ -140,6 +144,7 @@ export const Layout = () => {
                                 <SidebarLink to="/medicines" label="Medicines" Icon={Pill} />
                                 <SidebarLink to="/brands" label="Brands" Icon={Tag} />
                                 <SidebarLink to="/categories" label="Categories" Icon={Layers} />
+                                <SidebarLink to="/margins" label="Margins" Icon={Percent} />
                             </div>
                         </div>
 
@@ -167,6 +172,8 @@ export const Layout = () => {
                             <Route path="/brands/:id" element={<Brand />} />
                             <Route path="/categories" element={<CategoryLists />} />
                             <Route path="/categories/:id" element={<Category />} />
+                            <Route path="/margins" element={<MarginLists />} />
+                            <Route path="/margins/:id" element={<Margin />} />
                             <Route path="/sales" element={<SaleLists />} />
                             <Route path="/sales/:id" element={<Sale />} />
                             <Route path="/settings" element={<Settings />} />

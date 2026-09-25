@@ -8,21 +8,17 @@ import {
     Fingerprint,
     IndianRupee,
     Pill,
-    Printer,
     RefreshCw,
     ShoppingBag,
-    Trash2,
     User
 } from "lucide-react";
 import { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import type { IMedicine } from "../../types/medicine";
 import type { ISale } from "../../types/sale";
 import { useGetSaleByIdQuery } from "../api/saleApi";
-import useSaleOperations from "../hooks/useSaleOperations";
-import SaleReceiptModal from "./SaleReceiptModal";
-
 import SaleActionButton from "./SaleActionButton";
+import SaleReceiptModal from "./SaleReceiptModal";
 
 const Sale = () => {
     const { id: saleId } = useParams();
@@ -56,30 +52,10 @@ const Sale = () => {
 
     return (
         <div className="p-4 sm:p-8 space-y-6 bg-slate-50/50 dark:bg-slate-950 min-h-screen transition-colors duration-200">
-            {/* BACK BAR & HEADER */}
-            <div className="flex items-center justify-between gap-4">
-                <Link
-                    to="/sales"
-                    className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors"
-                >
-                    <ArrowLeft size={16} /> Back to Sales Registry
-                </Link>
-
-                <div className="flex items-center gap-2">
-                    <button
-                        type="button"
-                        onClick={() => setOpenReceiptModal(true)}
-                        className="py-2 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs shadow-md shadow-emerald-600/20 flex items-center gap-1.5 transition-all cursor-pointer"
-                    >
-                        <Printer size={15} /> View Receipt
-                    </button>
-                </div>
-            </div>
-
             <BasicInformation saleData={saleData} />
             <MedicinesPurchased saleData={saleData} />
             <FinancialInformation saleData={saleData} />
-            <AdditionalInformation saleData={saleData} refetch={refetch} />
+            <AdditionalInformation saleData={saleData} />
             <SaleActionButton saleData={saleData} refetch={refetch} />
 
             {openReceiptModal && (
@@ -296,31 +272,7 @@ const FinancialInformation = ({ saleData }: SaleDataProps) => {
     );
 };
 
-const AdditionalInformation = ({ saleData, refetch }: { saleData: ISale; refetch: () => void }) => {
-    const navigate = useNavigate();
-    const { deleteSale, restoreSale, deleteSalePermanently } = useSaleOperations();
-
-    const handleDelete = async () => {
-        if (!saleData._id) return;
-        if (window.confirm("Soft delete this sale record? Inventory stock will be replenished.")) {
-            await deleteSale(saleData._id);
-            refetch();
-        }
-    };
-
-    const handleRestore = async () => {
-        if (!saleData._id) return;
-        await restoreSale(saleData._id);
-        refetch();
-    };
-
-    const handlePermanentDelete = async () => {
-        if (!saleData._id) return;
-        if (window.confirm("CRITICAL WARNING: Permanently delete this sale record?")) {
-            await deleteSalePermanently(saleData._id);
-            navigate("/sales");
-        }
-    };
+const AdditionalInformation = ({ saleData }: { saleData: ISale }) => {
 
     return (
         <section className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-5">

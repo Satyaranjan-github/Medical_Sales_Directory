@@ -1,4 +1,4 @@
-import { CheckCircle2, CreditCard, Calendar, Printer, User, X, Pill } from "lucide-react";
+import { CheckCircle2, Printer, X } from "lucide-react";
 import type { ISale } from "../../types/sale";
 import type { IMedicine } from "../../types/medicine";
 
