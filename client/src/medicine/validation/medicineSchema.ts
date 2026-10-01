@@ -23,6 +23,11 @@ export const medicineSchema = z.object({
         _id: z.string().min(1, "Category is required"),
         name: z.string().min(1, "Category name is required"),
     }),
+    margin: z.object({
+        _id: z.string().min(1, "Margin is required"),
+        title: z.string().optional(),
+        value: z.number().optional(),
+    }).optional().nullable(),
     purchasePrice: z
         .number({ message: "Purchase price is required" })
         .min(0, "Purchase price must be positive"),

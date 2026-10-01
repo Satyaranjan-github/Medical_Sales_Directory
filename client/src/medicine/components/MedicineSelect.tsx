@@ -1,5 +1,5 @@
 import { Check, ChevronDown, Loader2, Pill, SearchX, X } from "lucide-react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import Select, {
@@ -11,7 +11,7 @@ import Select, {
     type OptionProps
 } from "react-select";
 import type { IMedicine } from "../../types/medicine";
-import { useGetAllMedicinesQuery, useLazyGetMedicineSuggestionsQuery } from "../api/medicineApi";
+import { useGetMedicineSuggestionsQuery } from "../api/medicineApi";
 
 interface Props {
     name?: string;
@@ -155,40 +155,24 @@ const MedicineSelectContent = ({
     label?: string;
     required?: boolean;
 }) => {
-    const { data: allMedsRes, isLoading: loadingAll } = useGetAllMedicinesQuery(undefined, {
-        skip: !!providedMedicines
+    const [hasOpened, setHasOpened] = useState(false);
+    const { data: suggestionsRes, isLoading: loadingAll, isFetching } = useGetMedicineSuggestionsQuery("", {
+        skip: !!providedMedicines || !hasOpened
     });
-    const [getMedicineSuggestions, { isFetching }] = useLazyGetMedicineSuggestionsQuery();
-    const [searchResults, setSearchResults] = useState<IMedicine[] | null>(null);
-    const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const allMedicines: IMedicine[] = (providedMedicines || allMedsRes?.data || []).filter(
-        (m: IMedicine) => !m.isDeleted
-    );
-    const isLoading = providedLoading ?? (providedMedicines ? false : loadingAll);
-
-    const activeMedicines = searchResults !== null ? searchResults : allMedicines;
-
-    const handleInputChange = (inputValue: string) => {
-        if (!inputValue.trim()) {
-            setSearchResults(null);
-            return;
+    const handleMenuOpen = () => {
+        if (!hasOpened) {
+            setHasOpened(true);
         }
-
-        if (debounceRef.current) clearTimeout(debounceRef.current);
-
-        debounceRef.current = setTimeout(async () => {
-            try {
-                const res = await getMedicineSuggestions(inputValue.trim());
-                setSearchResults(res.data?.data || []);
-            } catch {
-                setSearchResults([]);
-            }
-        }, 350);
     };
 
+    const allMedicines: IMedicine[] = (providedMedicines || suggestionsRes?.data || []).filter(
+        (m: IMedicine) => !m.isDeleted
+    );
+    const isLoading = providedLoading ?? (providedMedicines ? false : (loadingAll || isFetching));
+
     const selectedId = typeof value === "object" && value !== null ? value._id || "" : (value as string) || "";
-    const selectedMed = activeMedicines.find((m) => m._id === selectedId) || (typeof value === "object" ? (value as IMedicine) : undefined);
+    const selectedMed = allMedicines.find((m) => m._id === selectedId) || (typeof value === "object" ? (value as IMedicine) : undefined);
 
     const formattedValue: SelectOption | null = selectedId
         ? {
@@ -208,22 +192,22 @@ const MedicineSelectContent = ({
             <Select<SelectOption, false>
                 unstyled
                 isDisabled={disabled || isLoading}
-                isLoading={isLoading || isFetching}
+                isLoading={isLoading}
                 placeholder="Select or search medicine..."
                 isClearable
-                options={activeMedicines.map((m) => ({
+                options={allMedicines.map((m) => ({
                     value: m._id || "",
                     label: m.name,
                     medicine: m
                 }))}
                 value={formattedValue}
-                onInputChange={handleInputChange}
+                onMenuOpen={handleMenuOpen}
                 onChange={(selected) => {
                     if (!selected) {
                         onChange?.("", undefined);
                         return;
                     }
-                    const med = selected.medicine || activeMedicines.find((m) => m._id === selected.value);
+                    const med = selected.medicine || allMedicines.find((m) => m._id === selected.value);
                     onChange?.(selected.value, med);
                 }}
                 components={{

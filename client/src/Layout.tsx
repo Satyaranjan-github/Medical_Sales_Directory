@@ -1,4 +1,5 @@
 import {
+    Boxes,
     Layers,
     LayoutDashboard,
     Percent,
@@ -23,6 +24,8 @@ import Margin from "./margin/components/Margin";
 import MarginLists from "./margin/components/MarginLists";
 import Sale from "./sale/components/Sale";
 import SaleLists from "./sale/components/SaleLists";
+import Stock from "./stock/components/Stock";
+import StockLists from "./stock/components/StockLists";
 import Settings from "./settings/Settings";
 import { ThemeProvider } from "./context/ThemeContext";
 
@@ -87,6 +90,7 @@ export const Layout = () => {
                                 Directory & Stock
                             </p>
                             <div className="space-y-1">
+                                <SidebarLink to="/stocks" label="Stock Inventory" Icon={Boxes} onClick={closeMobileMenu} />
                                 <SidebarLink to="/medicines" label="Medicines" Icon={Pill} onClick={closeMobileMenu} />
                                 <SidebarLink to="/brands" label="Brands" Icon={Tag} onClick={closeMobileMenu} />
                                 <SidebarLink to="/categories" label="Categories" Icon={Layers} onClick={closeMobileMenu} />
@@ -141,6 +145,7 @@ export const Layout = () => {
                                 Directory & Stock
                             </p>
                             <div className="space-y-1">
+                                <SidebarLink to="/stocks" label="Stock Inventory" Icon={Boxes} />
                                 <SidebarLink to="/medicines" label="Medicines" Icon={Pill} />
                                 <SidebarLink to="/brands" label="Brands" Icon={Tag} />
                                 <SidebarLink to="/categories" label="Categories" Icon={Layers} />
@@ -166,6 +171,8 @@ export const Layout = () => {
                     <main className="flex-1 overflow-y-auto">
                         <Routes>
                             <Route path="/" element={<Dashboard />} />
+                            <Route path="/stocks" element={<StockLists />} />
+                            <Route path="/stocks/:id" element={<Stock />} />
                             <Route path="/medicines" element={<MedicineLists />} />
                             <Route path="/medicines/:id" element={<Medicine />} />
                             <Route path="/brands" element={<BrandLists />} />

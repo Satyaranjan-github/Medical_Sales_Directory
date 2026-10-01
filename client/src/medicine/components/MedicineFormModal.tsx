@@ -15,6 +15,7 @@ import { useEffect, type Dispatch, type SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import BrandSelect from "../../brand/components/BrandSelect";
 import CategorySelect from "../../category/components/CategorySelect";
+import MarginSelect from "../../margin/components/MarginSelect";
 import type { IMedicine } from "../../types/medicine";
 import useMedicineOperations from "../hooks/useMedicineOperations";
 import { medicineSchema } from "../validation/medicineSchema";
@@ -46,17 +47,17 @@ const MedicineFormModal = ({
     });
 
     const purchasePrice = watch("purchasePrice");
-    const gstRate = watch("gst");
+    const selectedMargin = watch("margin");
 
-    // Automatically update Selling Price when Purchase Price or GST Rate changes
+    // Automatically update Selling Price when Purchase Price or selected Margin changes
     useEffect(() => {
         const pPrice = Number(purchasePrice);
-        const gRate = Number(gstRate);
-        if (!isNaN(pPrice) && pPrice > 0 && !isNaN(gRate) && gRate > 0) {
-            const calculatedSellingPrice = Number((pPrice * (1 + gRate / 100)).toFixed(2));
+        const marginVal = selectedMargin && typeof selectedMargin === "object" ? Number(selectedMargin.value) : 0;
+        if (!isNaN(pPrice) && pPrice > 0 && !isNaN(marginVal) && marginVal > 0) {
+            const calculatedSellingPrice = Number((pPrice * (1 + marginVal / 100)).toFixed(2));
             setValue("sellingPrice", calculatedSellingPrice, { shouldValidate: true });
         }
-    }, [purchasePrice, gstRate, setValue]);
+    }, [purchasePrice, selectedMargin, setValue]);
 
     const { createMedicine, updateMedicine } = useMedicineOperations();
 
@@ -190,7 +191,7 @@ const MedicineFormModal = ({
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 {/* Purchase Price */}
                                 <div>
                                     <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5" htmlFor="purchasePrice">
@@ -207,6 +208,20 @@ const MedicineFormModal = ({
                                             className="w-full text-sm font-semibold pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
                                         />
                                     </div>
+                                </div>
+
+                                {/* Margin */}
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5" htmlFor="margin">
+                                        Margin Rule
+                                    </label>
+                                    <MarginSelect name="margin" control={control} />
+                                    {errors.margin && (
+                                        <p className="flex items-center gap-1 text-[11px] text-rose-500 mt-1 font-bold">
+                                            <AlertCircle size={12} />
+                                            {(errors.margin.message || (errors.margin as any)._id?.message || "Margin is required") as string}
+                                        </p>
+                                    )}
                                 </div>
 
                                 {/* GST */}

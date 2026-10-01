@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import Select, {
@@ -11,7 +11,7 @@ import Select, {
 } from "react-select";
 import { Check, ChevronDown, Loader2, SearchX, Tag, X } from "lucide-react";
 import type { IBrand } from "../../types/brand";
-import { useGetAllBrandsQuery, useLazyGetBrandSuggestionsQuery } from "../api/brandApi";
+import { useGetBrandSuggestionsQuery } from "../api/brandApi";
 
 interface Props {
     name?: string;
@@ -45,9 +45,8 @@ const CustomDropdownIndicator = (props: DropdownIndicatorProps<SelectOption, fal
         <components.DropdownIndicator {...props}>
             <ChevronDown
                 size={16}
-                className={`text-slate-400 dark:text-slate-500 transition-transform duration-200 ${
-                    selectProps.menuIsOpen ? "rotate-180 text-green-600 dark:text-green-400" : ""
-                }`}
+                className={`text-slate-400 dark:text-slate-500 transition-transform duration-200 ${selectProps.menuIsOpen ? "rotate-180 text-green-600 dark:text-green-400" : ""
+                    }`}
             />
         </components.DropdownIndicator>
     );
@@ -79,21 +78,19 @@ const CustomOption = (props: OptionProps<SelectOption, false>) => {
     return (
         <components.Option {...props}>
             <div
-                className={`flex items-center justify-between px-3 py-2.5 rounded-xl transition-all cursor-pointer text-sm font-semibold ${
-                    isSelected
+                className={`flex items-center justify-between px-3 py-2.5 rounded-xl transition-all cursor-pointer text-sm font-semibold ${isSelected
                         ? "bg-green-600 text-white shadow-sm font-bold"
                         : isFocused
-                        ? "bg-green-50/80 dark:bg-slate-800 text-green-800 dark:text-green-300"
-                        : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/60"
-                }`}
+                            ? "bg-green-50/80 dark:bg-slate-800 text-green-800 dark:text-green-300"
+                            : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/60"
+                    }`}
             >
                 <div className="flex items-center gap-2.5 min-w-0">
                     <div
-                        className={`w-6 h-6 rounded-lg flex items-center justify-center text-[11px] font-black shrink-0 ${
-                            isSelected
+                        className={`w-6 h-6 rounded-lg flex items-center justify-center text-[11px] font-black shrink-0 ${isSelected
                                 ? "bg-white/20 text-white"
                                 : "bg-green-100/70 dark:bg-green-950/60 text-green-700 dark:text-green-400"
-                        }`}
+                            }`}
                     >
                         {label ? label.charAt(0).toUpperCase() : "B"}
                     </div>
@@ -124,44 +121,36 @@ const BrandSelectContent = ({
     value?: IBrand | string | null;
     onChange?: (val: IBrand | null) => void;
 }) => {
-    const { data: allBrandsRes, isLoading: loadingAll } = useGetAllBrandsQuery(undefined);
-    const [getBrandSuggestions, { isFetching }] = useLazyGetBrandSuggestionsQuery();
-    const [searchResults, setSearchResults] = useState<IBrand[] | null>(null);
-    const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const [hasOpened, setHasOpened] = useState(false);
+    const { data: suggestionsRes, isLoading, isFetching } = useGetBrandSuggestionsQuery("", {
+        skip: !hasOpened
+    });
 
-    const allBrands: IBrand[] = allBrandsRes?.data || [];
+    const allBrands: IBrand[] = suggestionsRes?.data || [];
 
-    // Use searched results if user typed something, otherwise display all available brands
-    const activeBrands = searchResults !== null ? searchResults : allBrands;
-
-    const handleInputChange = (inputValue: string) => {
-        if (!inputValue.trim()) {
-            setSearchResults(null);
-            return;
+    const handleMenuOpen = () => {
+        if (!hasOpened) {
+            setHasOpened(true);
         }
-
-        if (debounceRef.current) clearTimeout(debounceRef.current);
-
-        debounceRef.current = setTimeout(async () => {
-            const res = await getBrandSuggestions(inputValue.trim());
-            setSearchResults(res.data?.data || []);
-        }, 350);
     };
 
     const formattedValue = value
         ? {
-              value: typeof value === "object" ? value._id : value,
-              label: typeof value === "object" ? value.name : value
-          }
+            value: typeof value === "object" ? value._id : value,
+            label:
+                typeof value === "object"
+                    ? value.name
+                    : allBrands.find((b) => b._id === value)?.name || value
+        }
         : null;
 
     return (
         <Select<SelectOption, false>
             unstyled
-            isLoading={loadingAll || isFetching}
+            isLoading={isLoading || isFetching}
             placeholder="Select or search brand..."
             isClearable
-            options={activeBrands.map((b) => ({
+            options={allBrands.map((b) => ({
                 value: b._id || "",
                 label: b.name
             }))}
@@ -170,13 +159,12 @@ const BrandSelectContent = ({
                     ? { value: formattedValue.value, label: formattedValue.label }
                     : null
             }
-            onInputChange={handleInputChange}
+            onMenuOpen={handleMenuOpen}
             onChange={(selected) => {
                 if (!selected) return onChange?.(null);
 
                 const brand =
                     allBrands.find((b) => b._id === selected.value) ||
-                    searchResults?.find((b) => b._id === selected.value) ||
                     { _id: selected.value, name: selected.label };
 
                 onChange?.(brand);
@@ -191,10 +179,9 @@ const BrandSelectContent = ({
             }}
             classNames={{
                 control: ({ isFocused }) =>
-                    `flex items-center min-h-[42px] rounded-xl border transition-all cursor-pointer bg-white dark:bg-slate-800 text-slate-900 dark:text-white ${
-                        isFocused
-                            ? "border-green-600 ring-2 ring-green-100 dark:ring-green-950/50"
-                            : "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
+                    `flex items-center min-h-[42px] rounded-xl border transition-all cursor-pointer bg-white dark:bg-slate-800 text-slate-900 dark:text-white ${isFocused
+                        ? "border-green-600 ring-2 ring-green-100 dark:ring-green-950/50"
+                        : "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
                     }`,
                 menu: () =>
                     "mt-1.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-xl dark:shadow-2xl overflow-hidden z-50 p-1.5 animate-in fade-in zoom-in-95 duration-100",

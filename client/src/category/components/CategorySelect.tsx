@@ -1,5 +1,5 @@
 import { Check, ChevronDown, Layers, Loader2, SearchX, X } from "lucide-react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import Select, {
@@ -11,7 +11,7 @@ import Select, {
     type OptionProps
 } from "react-select";
 import type { ICategory } from "../../types/category";
-import { useGetAllCategoriesQuery, useLazyGetCategorySuggestionsQuery } from "../api/categoryApi";
+import { useGetCategorySuggestionsQuery } from "../api/categoryApi";
 
 interface Props {
     name?: string;
@@ -124,44 +124,36 @@ const CategorySelectContent = ({
     value?: ICategory | string | null;
     onChange?: (val: ICategory | null) => void;
 }) => {
-    const { data: allCategoriesRes, isLoading: loadingAll } = useGetAllCategoriesQuery(undefined);
-    const [getCategorySuggestions, { isFetching }] = useLazyGetCategorySuggestionsQuery();
-    const [searchResults, setSearchResults] = useState<ICategory[] | null>(null);
-    const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const [hasOpened, setHasOpened] = useState(false);
+    const { data: suggestionsRes, isLoading, isFetching } = useGetCategorySuggestionsQuery("", {
+        skip: !hasOpened
+    });
 
-    const allCategories: ICategory[] = allCategoriesRes?.data || [];
+    const allCategories: ICategory[] = suggestionsRes?.data || [];
 
-    // Use searched results if user typed something, otherwise display all available categories
-    const activeCategories = searchResults !== null ? searchResults : allCategories;
-
-    const handleInputChange = (inputValue: string) => {
-        if (!inputValue.trim()) {
-            setSearchResults(null);
-            return;
+    const handleMenuOpen = () => {
+        if (!hasOpened) {
+            setHasOpened(true);
         }
-
-        if (debounceRef.current) clearTimeout(debounceRef.current);
-
-        debounceRef.current = setTimeout(async () => {
-            const res = await getCategorySuggestions(inputValue.trim());
-            setSearchResults(res.data?.data || []);
-        }, 350);
     };
 
     const formattedValue = value
         ? {
               value: typeof value === "object" ? value._id : value,
-              label: typeof value === "object" ? value.name : value
+              label:
+                  typeof value === "object"
+                      ? value.name
+                      : allCategories.find((c) => c._id === value)?.name || value
           }
         : null;
 
     return (
         <Select<SelectOption, false>
             unstyled
-            isLoading={loadingAll || isFetching}
+            isLoading={isLoading || isFetching}
             placeholder="Select or search category..."
             isClearable
-            options={activeCategories.map((c) => ({
+            options={allCategories.map((c) => ({
                 value: c._id || "",
                 label: c.name
             }))}
@@ -170,13 +162,12 @@ const CategorySelectContent = ({
                     ? { value: formattedValue.value, label: formattedValue.label }
                     : null
             }
-            onInputChange={handleInputChange}
+            onMenuOpen={handleMenuOpen}
             onChange={(selected) => {
                 if (!selected) return onChange?.(null);
 
                 const category =
                     allCategories.find((c) => c._id === selected.value) ||
-                    searchResults?.find((c) => c._id === selected.value) ||
                     { _id: selected.value, name: selected.label };
 
                 onChange?.(category);

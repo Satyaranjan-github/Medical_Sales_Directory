@@ -5,6 +5,7 @@ const medicineSchema = new Schema<IMedicine>({
     name: { type: String, required: true },
     brand: { type: Schema.Types.ObjectId, ref: "Brand" },
     category: { type: Schema.Types.ObjectId, ref: "Category" },
+    margin: { type: Schema.Types.ObjectId, ref: "Margin" },
     batchNumber: { type: String },
     purchasePrice: { type: Number, required: true },
     sellingPrice: { type: Number, required: true },

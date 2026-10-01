@@ -18,7 +18,7 @@ export const medicineApi = apiSlice.injectEndpoints({
                 method: 'POST',
                 body: medicine,
             }),
-            invalidatesTags: ['Medicine'],
+            invalidatesTags: ['Medicine', 'Stock'],
         }),
         getMedicineById: builder.query({
             query: (id) => `/medicines/${id}`,
@@ -30,28 +30,28 @@ export const medicineApi = apiSlice.injectEndpoints({
                 method: 'PATCH',
                 body: medicine,
             }),
-            invalidatesTags: ['Medicine'],
+            invalidatesTags: ['Medicine', 'Stock'],
         }),
         deleteMedicine: builder.mutation({
             query: (id) => ({
                 url: `/medicines/${id}/delete`,
                 method: 'PATCH',
             }),
-            invalidatesTags: ['Medicine'],
+            invalidatesTags: ['Medicine', 'Stock'],
         }),
         restoreMedicine: builder.mutation({
             query: (id) => ({
                 url: `/medicines/${id}/restore`,
                 method: 'PATCH',
             }),
-            invalidatesTags: ['Medicine'],
+            invalidatesTags: ['Medicine', 'Stock'],
         }),
         deleteMedicinePermanently: builder.mutation({
             query: (id) => ({
                 url: `/medicines/${id}/permanently`,
                 method: 'DELETE',
             }),
-            invalidatesTags: ['Medicine'],
+            invalidatesTags: ['Medicine', 'Stock'],
         }),
         getMedicineSuggestions: builder.query({
             query: (query) => ({
@@ -72,5 +72,6 @@ export const {
     useDeleteMedicinePermanentlyMutation,
     useLazyGetAllMedicinesQuery,
     useLazyGetMedicineByIdQuery,
-    useLazyGetMedicineSuggestionsQuery
+    useLazyGetMedicineSuggestionsQuery,
+    useGetMedicineSuggestionsQuery
 } = medicineApi;

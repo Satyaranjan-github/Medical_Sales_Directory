@@ -9,29 +9,30 @@ import Select, {
     type NoticeProps,
     type OptionProps
 } from "react-select";
-import { Check, ChevronDown, Loader2, SearchX, Percent, X } from "lucide-react";
-import type { IMargin } from "../../types/margin";
-import { useGetMarginSuggestionsQuery } from "../api/marginApi";
+import { Check, ChevronDown, Loader2, SearchX, Boxes, X } from "lucide-react";
+import type { IStock } from "../../types/stock";
+import { useGetStockSuggestionsQuery } from "../api/stockApi";
 
 interface Props {
     name?: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     control?: Control<any>;
-    value?: IMargin | string | null;
-    onChange?: (val: IMargin | null) => void;
+    value?: IStock | string | null;
+    onChange?: (val: IStock | null) => void;
 }
 
 interface SelectOption {
     value: string;
     label: string;
+    stock?: any;
 }
 
-// Custom Control component with left Percent icon
-const MarginControl = (props: ControlProps<SelectOption, false>) => {
+// Custom Control component with left Boxes icon
+const StockControl = (props: ControlProps<SelectOption, false>) => {
     return (
         <components.Control {...props}>
-            <div className="pl-3 flex items-center justify-center text-green-600 dark:text-green-400 shrink-0 pointer-events-none">
-                <Percent size={16} />
+            <div className="pl-3 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0 pointer-events-none">
+                <Boxes size={16} />
             </div>
             {props.children}
         </components.Control>
@@ -46,7 +47,7 @@ const CustomDropdownIndicator = (props: DropdownIndicatorProps<SelectOption, fal
             <ChevronDown
                 size={16}
                 className={`text-slate-400 dark:text-slate-500 transition-transform duration-200 ${
-                    selectProps.menuIsOpen ? "rotate-180 text-green-600 dark:text-green-400" : ""
+                    selectProps.menuIsOpen ? "rotate-180 text-emerald-600 dark:text-emerald-400" : ""
                 }`}
             />
         </components.DropdownIndicator>
@@ -67,23 +68,23 @@ const CustomClearIndicator = (props: ClearIndicatorProps<SelectOption, false>) =
 // Custom Loading Indicator with spinning Loader2
 const CustomLoadingIndicator = () => {
     return (
-        <div className="px-1.5 flex items-center justify-center text-green-600 dark:text-green-400">
+        <div className="px-1.5 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
             <Loader2 size={16} className="animate-spin" />
         </div>
     );
 };
 
-// Custom Option component with margin percent badge
+// Custom Option component with Stock badge and checkmark
 const CustomOption = (props: OptionProps<SelectOption, false>) => {
-    const { isSelected, isFocused, label } = props;
+    const { isSelected, isFocused, label, data } = props;
     return (
         <components.Option {...props}>
             <div
-                className={`flex items-center justify-between px-3 py-2.5 rounded-xl transition-all cursor-pointer text-sm font-semibold ${
+                className={`flex items-center justify-between px-3 py-2.5 rounded-xl transition-all cursor-pointer text-xs font-semibold ${
                     isSelected
-                        ? "bg-green-600 text-white shadow-sm font-bold"
+                        ? "bg-emerald-600 text-white shadow-sm font-bold"
                         : isFocused
-                        ? "bg-green-50/80 dark:bg-slate-800 text-green-800 dark:text-green-300"
+                        ? "bg-emerald-50/80 dark:bg-slate-800 text-emerald-800 dark:text-emerald-300"
                         : "text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/60"
                 }`}
             >
@@ -92,12 +93,19 @@ const CustomOption = (props: OptionProps<SelectOption, false>) => {
                         className={`w-6 h-6 rounded-lg flex items-center justify-center text-[11px] font-black shrink-0 ${
                             isSelected
                                 ? "bg-white/20 text-white"
-                                : "bg-green-100/70 dark:bg-green-950/60 text-green-700 dark:text-green-400"
+                                : "bg-emerald-100/70 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400"
                         }`}
                     >
-                        %
+                        <Boxes size={14} />
                     </div>
-                    <span className="truncate">{label}</span>
+                    <div className="flex flex-col min-w-0">
+                        <span className="truncate font-bold text-xs">{label}</span>
+                        {data.stock && (
+                            <span className="text-[10px] text-slate-400">
+                                Qty: {data.stock.quantity} • {data.stock.location || "Store"}
+                            </span>
+                        )}
+                    </div>
                 </div>
                 {isSelected && <Check size={16} className="shrink-0 text-white" />}
             </div>
@@ -111,25 +119,25 @@ const CustomNoOptionsMessage = (props: NoticeProps<SelectOption, false>) => {
         <components.NoOptionsMessage {...props}>
             <div className="py-4 px-3 text-center flex flex-col items-center justify-center gap-1.5 text-slate-400 dark:text-slate-500">
                 <SearchX size={20} />
-                <span className="text-xs font-semibold">No margins found</span>
+                <span className="text-xs font-semibold">No stock items found</span>
             </div>
         </components.NoOptionsMessage>
     );
 };
 
-const MarginSelectContent = ({
+const StockSelectContent = ({
     value,
     onChange
 }: {
-    value?: IMargin | string | null;
-    onChange?: (val: IMargin | null) => void;
+    value?: IStock | string | null;
+    onChange?: (val: IStock | null) => void;
 }) => {
     const [hasOpened, setHasOpened] = useState(false);
-    const { data: suggestionsRes, isLoading, isFetching } = useGetMarginSuggestionsQuery("", {
+    const { data: suggestionsRes, isLoading, isFetching } = useGetStockSuggestionsQuery("", {
         skip: !hasOpened
     });
 
-    const allMargins: IMargin[] = suggestionsRes?.data || [];
+    const allStocks: any[] = suggestionsRes?.data || [];
 
     const handleMenuOpen = () => {
         if (!hasOpened) {
@@ -142,10 +150,10 @@ const MarginSelectContent = ({
               value: typeof value === "object" ? value._id : value,
               label:
                   typeof value === "object"
-                      ? `${value.title} (${value.value}%)`
+                      ? (value.medicine as any)?.name || "Stock Item"
                       : (() => {
-                            const found = allMargins.find((m) => m._id === value);
-                            return found ? `${found.title} (${found.value}%)` : value;
+                            const found = allStocks.find((s) => s._id === value);
+                            return found?.medicine?.name || value;
                         })()
           }
         : null;
@@ -154,11 +162,12 @@ const MarginSelectContent = ({
         <Select<SelectOption, false>
             unstyled
             isLoading={isLoading || isFetching}
-            placeholder="Select or search margin..."
+            placeholder="Select or search stock..."
             isClearable
-            options={allMargins.map((m) => ({
-                value: m._id || "",
-                label: `${m.title} (${m.value}%)`
+            options={allStocks.map((s) => ({
+                value: s._id || "",
+                label: s.medicine?.name || "Medicine Item",
+                stock: s
             }))}
             value={
                 formattedValue && formattedValue.value
@@ -169,14 +178,16 @@ const MarginSelectContent = ({
             onChange={(selected) => {
                 if (!selected) return onChange?.(null);
 
-                const margin =
-                    allMargins.find((m) => m._id === selected.value) ||
-                    { _id: selected.value, title: selected.label, value: 0 };
+                const stockItem =
+                    allStocks.find((s) => s._id === selected.value) || {
+                        _id: selected.value,
+                        medicine: { name: selected.label }
+                    };
 
-                onChange?.(margin);
+                onChange?.(stockItem as any);
             }}
             components={{
-                Control: MarginControl,
+                Control: StockControl,
                 DropdownIndicator: CustomDropdownIndicator,
                 ClearIndicator: CustomClearIndicator,
                 LoadingIndicator: CustomLoadingIndicator,
@@ -187,7 +198,7 @@ const MarginSelectContent = ({
                 control: ({ isFocused }) =>
                     `flex items-center min-h-[42px] rounded-xl border transition-all cursor-pointer bg-white dark:bg-slate-800 text-slate-900 dark:text-white ${
                         isFocused
-                            ? "border-green-600 ring-2 ring-green-100 dark:ring-green-950/50"
+                            ? "border-emerald-600 ring-2 ring-emerald-100 dark:ring-emerald-950/50"
                             : "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
                     }`,
                 menu: () =>
@@ -203,14 +214,14 @@ const MarginSelectContent = ({
     );
 };
 
-const MarginSelect = ({ name, control, value, onChange }: Props) => {
+const StockSelect = ({ name, control, value, onChange }: Props) => {
     if (name && control) {
         return (
             <Controller
                 name={name}
                 control={control}
                 render={({ field }) => (
-                    <MarginSelectContent
+                    <StockSelectContent
                         value={field.value}
                         onChange={(val) => field.onChange(val)}
                     />
@@ -219,7 +230,7 @@ const MarginSelect = ({ name, control, value, onChange }: Props) => {
         );
     }
 
-    return <MarginSelectContent value={value} onChange={onChange} />;
+    return <StockSelectContent value={value} onChange={onChange} />;
 };
 
-export default MarginSelect;
+export default StockSelect;

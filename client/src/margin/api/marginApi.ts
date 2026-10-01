@@ -69,5 +69,6 @@ export const {
     useDeleteMarginPermanentlyMutation,
     useLazyGetAllMarginsQuery,
     useLazyGetMarginByIdQuery,
-    useLazyGetMarginSuggestionsQuery
+    useLazyGetMarginSuggestionsQuery,
+    useGetMarginSuggestionsQuery
 } = marginApi;

@@ -1,11 +1,13 @@
 import type { IBrand } from "./brand";
 import type { ICategory } from "./category";
+import type { IMargin } from "./margin";
 
 export interface IMedicine {
     _id?: string;
     name: string;
     brand: IBrand;
     category: ICategory;
+    margin?: IMargin;
     batchNumber?: string;
     purchasePrice: number;
     sellingPrice: number;

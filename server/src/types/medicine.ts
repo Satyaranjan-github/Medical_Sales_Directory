@@ -1,10 +1,12 @@
 import { Document, Types } from 'mongoose';
+import type { IMargin } from './margin.ts';
 
 export interface IMedicine extends Document {
     name: string;
 
     brand: Types.ObjectId | string;
     category: Types.ObjectId | string;
+    margin?: Types.ObjectId | string | IMargin;
 
     batchNumber?: string;
 
@@ -17,8 +19,6 @@ export interface IMedicine extends Document {
 
     manufactureDate?: Date;
     expiry: Date;
-
-    // supplier?: string;
 
     description?: string;
 

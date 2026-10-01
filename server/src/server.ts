@@ -8,6 +8,7 @@ import categoryRoutes from '../src/category/category.route'
 import medicineRoutes from '../src/medicine/medicine.route'
 import saleRoutes from '../src/sale/sale.route'
 import marginRoutes from '../src/margin/margin.route'
+import stockRoutes from '../src/stock/stock.route'
 
 dotenv.config()
 
@@ -29,6 +30,7 @@ app.use("/api/brands", brandRoutes)
 app.use("/api/categories", categoryRoutes)
 app.use("/api/sales", saleRoutes)
 app.use("/api/margins", marginRoutes)
+app.use("/api/stocks", stockRoutes)
 
 app.get('/', (req, res) => {
     res.send('Hello World!')
