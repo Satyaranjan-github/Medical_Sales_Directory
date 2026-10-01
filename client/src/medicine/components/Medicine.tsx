@@ -16,6 +16,7 @@ import {
 import { Link, useParams } from "react-router-dom";
 import type { IBrand } from "../../types/brand";
 import type { ICategory } from "../../types/category";
+import type { IMargin } from "../../types/margin";
 import type { IMedicine } from "../../types/medicine";
 import { useGetMedicineByIdQuery } from "../api/medicineApi";
 import { useGetSalesByMedicineQuery } from "../../sale/api/saleApi";
@@ -190,6 +191,7 @@ const AdditionalInformation = ({ medicineData }: MedicineDataProps) => {
 const BasicInformation = ({ medicineData }: MedicineDataProps) => {
     const brandObj = typeof medicineData.brand === "object" ? (medicineData.brand as IBrand) : null;
     const categoryObj = typeof medicineData.category === "object" ? (medicineData.category as ICategory) : null;
+    const marginObj = typeof medicineData.margin === "object" ? (medicineData.margin as IMargin) : null;
 
     return (
         <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 shadow-xs space-y-5">
@@ -253,6 +255,26 @@ const BasicInformation = ({ medicineData }: MedicineDataProps) => {
                         <p className="text-base font-extrabold text-slate-900 dark:text-white mt-0.5">
                             {medicineData.gst}%
                         </p>
+                    </div>
+                </div>
+
+                {/* Margin Link */}
+                <div className="flex items-start gap-3">
+                    <div className="p-2 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 mt-0.5">
+                        <Percent className="size-5" />
+                    </div>
+                    <div>
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Margin Rule</p>
+                        {marginObj ? (
+                            <Link
+                                to={`/margins/${marginObj._id}`}
+                                className="text-base font-extrabold text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 hover:underline mt-0.5 inline-block"
+                            >
+                                {marginObj.title} ({marginObj.value}%)
+                            </Link>
+                        ) : (
+                            <p className="text-base font-semibold text-slate-400 mt-0.5">N/A</p>
+                        )}
                     </div>
                 </div>
 

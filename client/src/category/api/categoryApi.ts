@@ -69,5 +69,6 @@ export const {
     useDeleteCategoryPermanentlyMutation,
     useLazyGetAllCategoriesQuery,
     useLazyGetCategoryByIdQuery,
-    useLazyGetCategorySuggestionsQuery
+    useLazyGetCategorySuggestionsQuery,
+    useGetCategorySuggestionsQuery
 } = categoryApi

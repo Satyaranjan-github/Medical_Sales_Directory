@@ -4,6 +4,7 @@ import {
     ChevronRight,
     Clock,
     Layers,
+    Percent,
     Pill,
     Plus,
     Search,
@@ -13,6 +14,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { IBrand } from "../../types/brand";
 import type { ICategory } from "../../types/category";
+import type { IMargin } from "../../types/margin";
 import type { IMedicine } from "../../types/medicine";
 import { useGetAllMedicinesQuery } from "../api/medicineApi";
 import MedicineFormModal from "./MedicineFormModal";
@@ -188,6 +190,7 @@ export default MedicineLists;
 const MedicineCard = ({ med, onSelect }: { med: IMedicine; onSelect: () => void }) => {
     const brandName = typeof med.brand === "object" ? (med.brand as IBrand)?.name : "";
     const categoryName = typeof med.category === "object" ? (med.category as ICategory)?.name : "";
+    const marginObj = typeof med.margin === "object" ? (med.margin as IMargin) : null;
 
     const isLow = (med.stock ?? 0) <= 10;
     const isExpired = med.expiry && new Date(med.expiry) <= new Date();
@@ -219,7 +222,7 @@ const MedicineCard = ({ med, onSelect }: { med: IMedicine; onSelect: () => void 
                     )}
                 </div>
 
-                {/* Tags (Brand & Category) */}
+                {/* Tags (Brand, Category & Margin) */}
                 <div className="flex flex-wrap gap-1.5 my-3">
                     {brandName && (
                         <span className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
@@ -231,6 +234,12 @@ const MedicineCard = ({ med, onSelect }: { med: IMedicine; onSelect: () => void 
                         <span className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/60 px-2 py-0.5 rounded-md border border-slate-100 dark:border-slate-800">
                             <Layers size={10} />
                             {categoryName}
+                        </span>
+                    )}
+                    {marginObj && (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-200/50 dark:border-emerald-800/50">
+                            <Percent size={10} />
+                            {marginObj.title} ({marginObj.value}%)
                         </span>
                     )}
                 </div>

@@ -271,7 +271,7 @@ const SaleCard = ({
 
                     <div className="space-y-1.5 max-h-24 overflow-y-auto pr-1">
                         {sale.medicines?.map((m, i) => {
-                            const medName = typeof m.medicine === "object" ? (m.medicine as IMedicine).name : "Medicine Item";
+                            const medName = typeof m.medicine === "object" ? (m.medicine as IMedicine)?.name : "Medicine Item";
                             return (
                                 <div key={i} className="flex items-center justify-between text-slate-700 dark:text-slate-300 text-xs font-semibold">
                                     <span className="truncate max-w-[170px]">{medName}</span>

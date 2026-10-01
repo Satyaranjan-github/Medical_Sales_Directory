@@ -30,6 +30,14 @@ export const medicineSchema = z.object({
         .refine((val) => val !== null, {
             message: "Category is required",
         }),
+    margin: z
+        .object({
+            _id: z.string(),
+            title: z.string().optional(),
+            value: z.number().optional(),
+        })
+        .optional()
+        .nullable(),
     expiry: z.string({
         error: 'Expiry date is required',
     }).transform((val) => new Date(val)),
